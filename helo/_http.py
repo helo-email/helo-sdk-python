@@ -99,7 +99,7 @@ class HttpClient:
         except Exception:
             data = {}
 
-        message = data.get("title") or data.get("detail") or f"HTTP {response.status_code}"
+        message = data.get("detail") or data.get("title") or f"HTTP {response.status_code}"
         cls = _STATUS_TO_ERROR.get(response.status_code, APIError)
         raise cls(
             str(message),

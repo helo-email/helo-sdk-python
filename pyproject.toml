@@ -38,7 +38,7 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/helo/helo-sdk-python"
-Documentation = "https://docs.helo.com"
+Documentation = "https://docs.helohq.com"
 Repository = "https://github.com/helo/helo-sdk-python"
 
 [tool.setuptools.packages.find]

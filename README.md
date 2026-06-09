@@ -1,0 +1,341 @@
+# Helo Python SDK
+
+Python client library for the [Helo](https://helohq.com) email API.
+
+## Installation
+
+```bash
+pip install helo
+```
+
+Requires Python 3.9+ and installs `httpx` and `pydantic` automatically.
+
+## Quick Start
+
+```python
+import helo
+
+client = helo.Helo(api_key="your-api-key")
+
+response = client.sending.transactional(
+    from_={"email": "sender@example.com", "name": "Acme"},
+    to=[{"email": "user@example.com", "name": "Alice"}],
+    subject="Hello from Helo",
+    html="<p>Welcome!</p>",
+    text="Welcome!",
+)
+print(response.message_id)
+```
+
+## Authentication
+
+Pass your API key when creating the client:
+
+```python
+client = helo.Helo(api_key="your-api-key")
+```
+
+Optionally override the base URL or timeout (defaults: `https://api.helohq.com`, 30 seconds):
+
+```python
+client = helo.Helo(
+    api_key="your-api-key",
+    base_url="https://api.helohq.com",
+    timeout=60.0,
+)
+```
+
+## Context Manager
+
+Use `with` to ensure the underlying HTTP connection is closed:
+
+```python
+with helo.Helo(api_key="your-api-key") as client:
+    client.sending.transactional(...)
+```
+
+## Sending
+
+### Transactional email
+
+```python
+response = client.sending.transactional(
+    from_={"email": "sender@example.com"},
+    to=[{"email": "user@example.com"}],
+    subject="Your order shipped",
+    html="<p>Your order is on its way.</p>",
+    text="Your order is on its way.",
+    # Optional
+    cc=[{"email": "support@example.com"}],
+    bcc=[{"email": "archive@example.com"}],
+    reply_to=[{"email": "noreply@example.com"}],
+    tags=["order", "shipping"],
+    metadata={"order_id": "12345"},
+    channel_id="ch_abc123",
+    idempotency_key="order-12345-shipped",
+)
+```
+
+### Transactional batch
+
+```python
+response = client.sending.transactional_batch(
+    requests=[
+        {
+            "from": {"email": "sender@example.com"},
+            "to": [{"email": "user1@example.com"}],
+            "subject": "Hello Alice",
+            "text": "Hi Alice!",
+        },
+        {
+            "from": {"email": "sender@example.com"},
+            "to": [{"email": "user2@example.com"}],
+            "subject": "Hello Bob",
+            "text": "Hi Bob!",
+        },
+    ],
+    channel_id="ch_abc123",
+)
+```
+
+### Broadcast (template-driven, multi-recipient)
+
+```python
+response = client.sending.broadcast(
+    from_={"email": "newsletter@example.com"},
+    template={"id": "tmpl_abc123"},
+    messages=[
+        {"to": [{"email": "user1@example.com"}], "variables": {"name": "Alice"}},
+        {"to": [{"email": "user2@example.com"}], "variables": {"name": "Bob"}},
+    ],
+    channel_id="ch_abc123",
+)
+```
+
+### Broadcast message (single recipient)
+
+```python
+response = client.sending.broadcast_message(
+    from_={"email": "newsletter@example.com"},
+    to=[{"email": "user@example.com"}],
+    subject="This month's digest",
+    html="<p>Here's what's new...</p>",
+    channel_id="ch_abc123",
+)
+```
+
+## Channels
+
+```python
+# Create
+channel = client.channels.create(
+    name="Production",
+    delivery_type=helo.DeliveryType.LIVE,
+)
+
+# List
+channels = client.channels.list(limit=20, offset=0)
+
+# Retrieve
+channel = client.channels.retrieve("ch_abc123")
+
+# Update
+channel = client.channels.update("ch_abc123", name="Production v2")
+
+# Delete
+client.channels.delete("ch_abc123")
+```
+
+**`DeliveryType` values:** `LIVE`, `SANDBOX`
+
+## Activity
+
+```python
+# List events
+events = client.activity.list_events(
+    channel_id="ch_abc123",
+    start_date="2024-01-01",
+    end_date="2024-01-31",
+    event_types=[helo.EventType.DELIVERED, helo.EventType.OPENED],
+    limit=50,
+)
+
+# List messages
+messages = client.activity.list_messages(
+    channel_id="ch_abc123",
+    recipient="user@example.com",
+    limit=25,
+)
+
+# Retrieve a message
+message = client.activity.retrieve_message("msg_abc123")
+```
+
+**`EventType` values:** `DELIVERED`, `OPENED`, `CLICKED`, `BOUNCED`, `COMPLAINED`, `UNSUBSCRIBED`
+
+**`MailType` values:** `TRANSACTIONAL`, `BROADCAST`
+
+## Domains
+
+```python
+# Create
+domain = client.domains.create(name="mail.example.com", channel_ids=["ch_abc123"])
+
+# List
+domains = client.domains.list(limit=10)
+
+# Retrieve
+domain = client.domains.retrieve("dom_abc123")
+
+# Update (assign/reassign channels)
+domain = client.domains.update("dom_abc123", channel_ids=["ch_abc123", "ch_xyz456"])
+
+# Verify DNS records
+dns_records = client.domains.verify("dom_abc123")
+
+# Rotate DKIM key
+dns_record = client.domains.rotate_key("dom_abc123")
+
+# Delete
+client.domains.delete("dom_abc123")
+```
+
+## Broadcasts
+
+```python
+# List broadcasts for a channel
+broadcasts = client.broadcasts.list(
+    channel_id="ch_abc123",
+    status=helo.BroadcastStatus.SENT,
+)
+
+# Retrieve
+broadcast = client.broadcasts.retrieve("brd_abc123")
+
+# List delivery failures
+failures = client.broadcasts.list_failures("brd_abc123")
+
+# List suppressions generated by this broadcast
+suppressions = client.broadcasts.list_suppressions("brd_abc123")
+```
+
+**`BroadcastStatus` values:** `PENDING`, `SENDING`, `SENT`, `FAILED`
+
+## Statistics
+
+```python
+# Totals for a date range
+totals = client.statistics.retrieve_totals(
+    from_="2024-01-01",
+    to="2024-01-31",
+    channel_id="ch_abc123",
+)
+
+# Daily breakdown (timezone required)
+daily = client.statistics.retrieve_daily(
+    from_="2024-01-01",
+    to="2024-01-31",
+    timezone="America/New_York",
+    channel_id="ch_abc123",
+)
+
+# Hourly breakdown
+hourly = client.statistics.retrieve_hourly(
+    from_="2024-01-15T00:00:00Z",
+    to="2024-01-15T23:59:59Z",
+    channel_id="ch_abc123",
+)
+```
+
+## Suppressions
+
+```python
+# List
+suppressions = client.suppressions.list(
+    channel_id="ch_abc123",
+    mail_type=helo.MailType.TRANSACTIONAL,
+    reason=helo.SuppressionReason.BOUNCED,
+)
+
+# Add suppressions
+result = client.suppressions.create(
+    channel_id="ch_abc123",
+    mail_type=helo.MailType.TRANSACTIONAL,
+    emails=["bad@example.com", "invalid@example.com"],
+)
+
+# Remove suppressions
+result = client.suppressions.remove(
+    channel_id="ch_abc123",
+    mail_type=helo.MailType.TRANSACTIONAL,
+    emails=["reactivated@example.com"],
+)
+```
+
+**`SuppressionReason` values:** `BOUNCED`, `COMPLAINED`, `UNSUBSCRIBED`, `MANUAL`
+
+## Webhook Endpoints
+
+```python
+# Create
+endpoint = client.webhook_endpoints.create(
+    url="https://example.com/webhooks/helo",
+    events=[helo.WebhookEvent.DELIVERED, helo.WebhookEvent.BOUNCED],
+    channel_id="ch_abc123",
+)
+
+# List
+endpoints = client.webhook_endpoints.list(channel_ids=["ch_abc123"])
+
+# Retrieve
+endpoint = client.webhook_endpoints.retrieve("whe_abc123")
+
+# Update
+endpoint = client.webhook_endpoints.update(
+    "whe_abc123",
+    enabled=False,
+)
+
+# Regenerate signing key
+endpoint = client.webhook_endpoints.regenerate_signing_key("whe_abc123")
+
+# Delete
+client.webhook_endpoints.delete("whe_abc123")
+```
+
+**`WebhookEvent` values:** `DELIVERED`, `OPENED`, `CLICKED`, `BOUNCED`, `COMPLAINED`, `UNSUBSCRIBED`
+
+## Error Handling
+
+All API errors raise exceptions from the `helo` namespace:
+
+```python
+import helo
+
+try:
+    client.sending.transactional(
+        from_={"email": "sender@example.com"},
+        to=[{"email": "user@example.com"}],
+        subject="Test",
+    )
+except helo.AuthenticationError as e:
+    print(f"Auth failed: {e} (status {e.status_code})")
+except helo.BadRequestError as e:
+    print(f"Bad request: {e.detail}")
+except helo.NotFoundError:
+    print("Resource not found")
+except helo.APIError as e:
+    # Catch-all for any other API error
+    print(f"API error {e.status_code}: {e}")
+```
+
+| Exception | HTTP Status |
+|-----------|-------------|
+| `BadRequestError` | 400 |
+| `AuthenticationError` | 401 |
+| `PermissionDeniedError` | 403 |
+| `NotFoundError` | 404 |
+| `UnprocessableEntityError` | 422 |
+| `InternalServerError` | 500 |
+
+All exceptions expose `.status_code`, `.error_code`, `.detail`, and `.request_id` attributes.

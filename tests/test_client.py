@@ -8,7 +8,7 @@ import helo
 from helo import Helo, DeliveryType, MailType, WebhookEvent
 
 
-BASE_URL = "http://localhost:8002"
+BASE_URL = "http://localhost:8000"
 
 
 @pytest.fixture
