@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from .shared import BroadcastStatus, HeloModel, MailAddress
 
@@ -23,8 +23,8 @@ class BroadcastStatistics(HeloModel):
 
 class BroadcastTemplateContent(HeloModel):
     subject: str
-    html: Optional[str] = None
-    text: Optional[str] = None
+    html: str | None = None
+    text: str | None = None
 
 
 class BroadcastAttachment(HeloModel):
@@ -34,16 +34,16 @@ class BroadcastAttachment(HeloModel):
 
 
 class BroadcastContent(HeloModel):
-    from_: Optional[MailAddress] = None
-    reply_to: Optional[List[MailAddress]] = None
-    template: Optional[BroadcastTemplateContent] = None
-    attachments: Optional[List[BroadcastAttachment]] = None
-    tags: Optional[List[str]] = None
-    headers: Optional[Dict[str, Any]] = None
-    metadata: Optional[Dict[str, Any]] = None
+    from_: MailAddress | None = None
+    reply_to: list[MailAddress] | None = None
+    template: BroadcastTemplateContent | None = None
+    attachments: list[BroadcastAttachment] | None = None
+    tags: list[str] | None = None
+    headers: dict[str, Any] | None = None
+    metadata: dict[str, Any] | None = None
 
     @classmethod
-    def model_validate(cls, obj: Any, **kwargs: Any) -> "BroadcastContent":
+    def model_validate(cls, obj: Any, **kwargs: Any) -> BroadcastContent:
         if isinstance(obj, dict) and "from" in obj and "from_" not in obj:
             obj = dict(obj)
             obj["from_"] = obj.pop("from")
@@ -75,13 +75,13 @@ class BroadcastDetailsResponse(HeloModel):
 
 class PaginatedResponseOfBroadcast(HeloModel):
     total_count: int
-    results: List[BroadcastResponse]
+    results: list[BroadcastResponse]
 
 
 class RecipientHeaders(HeloModel):
-    to: List[MailAddress]
-    cc: Optional[List[MailAddress]] = None
-    bcc: Optional[List[MailAddress]] = None
+    to: list[MailAddress]
+    cc: list[MailAddress] | None = None
+    bcc: list[MailAddress] | None = None
 
 
 class BroadcastFailureResponse(HeloModel):
@@ -93,9 +93,9 @@ class BroadcastFailureResponse(HeloModel):
 
 class PaginatedResponseOfBroadcastFailure(HeloModel):
     total_count: int
-    results: List[BroadcastFailureResponse]
+    results: list[BroadcastFailureResponse]
 
 
 class PaginatedResponseOfBroadcastSuppression(HeloModel):
     total_count: int
-    results: List[str]
+    results: list[str]

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List, Optional
 
 from .shared import HeloModel, SuppressionReason
 
@@ -14,24 +13,24 @@ class SuppressionResponse(HeloModel):
 
 class PaginatedResponseOfSuppressionResponse(HeloModel):
     total_count: int
-    results: List[SuppressionResponse]
+    results: list[SuppressionResponse]
 
 
 class SuppressionResult(HeloModel):
     email: str
     success: bool
-    message: Optional[str] = None
+    message: str | None = None
 
 
 class CreateSuppressionsResponse(HeloModel):
-    results: List[SuppressionResult]
+    results: list[SuppressionResult]
 
 
 class RemoveSuppressionResult(HeloModel):
     email: str
     success: bool
-    message: Optional[str] = None
+    message: str | None = None
 
 
 class RemoveSuppressionsResponse(HeloModel):
-    results: List[RemoveSuppressionResult]
+    results: list[RemoveSuppressionResult]

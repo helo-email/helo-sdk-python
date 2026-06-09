@@ -1,19 +1,27 @@
-from .activity import ActivityResource
-from .broadcasts import BroadcastsResource
-from .channels import ChannelsResource
-from .domains import DomainsResource
-from .sending import SendingResource
-from .statistics import StatisticsResource
-from .suppressions import SuppressionsResource
-from .webhook_endpoints import WebhookEndpointsResource
+from .activity import ActivityResource, AsyncActivityResource
+from .broadcasts import AsyncBroadcastsResource, BroadcastsResource
+from .channels import AsyncChannelsResource, ChannelsResource
+from .domains import AsyncDomainsResource, DomainsResource
+from .sending import AsyncSendingResource, SendingResource
+from .statistics import AsyncStatisticsResource, StatisticsResource
+from .suppressions import AsyncSuppressionsResource, SuppressionsResource
+from .webhook_endpoints import AsyncWebhookEndpointsResource, WebhookEndpointsResource
 
 __all__ = [
     "ActivityResource",
+    "AsyncActivityResource",
     "BroadcastsResource",
+    "AsyncBroadcastsResource",
     "ChannelsResource",
+    "AsyncChannelsResource",
     "DomainsResource",
+    "AsyncDomainsResource",
     "SendingResource",
+    "AsyncSendingResource",
     "StatisticsResource",
+    "AsyncStatisticsResource",
     "SuppressionsResource",
+    "AsyncSuppressionsResource",
     "WebhookEndpointsResource",
+    "AsyncWebhookEndpointsResource",
 ]

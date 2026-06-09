@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import List, Optional
-
 from .shared import HeloModel
 
 
 class SendMessageAcceptedResponse(HeloModel):
-    status: Optional[str] = None
-    message_id: Optional[str] = None
-    suppressions: Optional[List[str]] = None
+    status: str | None = None
+    message_id: str | None = None
+    suppressions: list[str] | None = None
 
 
 class SendMessageFailedResponse(HeloModel):
@@ -18,9 +16,9 @@ class SendMessageFailedResponse(HeloModel):
 
 
 class SendMessageBatchResponse(HeloModel):
-    responses: List[SendMessageAcceptedResponse]
+    responses: list[SendMessageAcceptedResponse]
 
 
 class SendBroadcastResponse(HeloModel):
-    status: Optional[str] = None
-    broadcast_id: Optional[str] = None
+    status: str | None = None
+    broadcast_id: str | None = None

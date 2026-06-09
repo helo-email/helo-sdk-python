@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
@@ -80,4 +79,4 @@ class WebhookEvent(str, Enum):
 
 class MailAddress(HeloModel):
     email: str
-    name: Optional[str] = None
+    name: str | None = None

@@ -46,12 +46,13 @@ You can also pass the key explicitly — useful when managing multiple accounts 
 client = helo.Helo(api_key="your-api-key")
 ```
 
-Optionally override the base URL or timeout (defaults: `https://api.helohq.com`, 30 seconds):
+Optionally override the base URL, timeout, or retry count (defaults: `https://api.helohq.com`, 30 seconds, 2 retries):
 
 ```python
 client = helo.Helo(
     base_url="https://api.helohq.com",
     timeout=60.0,
+    max_retries=2,
 )
 ```
 
@@ -62,6 +63,39 @@ Use `with` to ensure the underlying HTTP connection is closed:
 ```python
 with helo.Helo() as client:
     client.sending.transactional(...)
+```
+
+## Async
+
+An `AsyncHelo` client mirrors the synchronous API; every resource method becomes
+a coroutine. Use it as an async context manager so the connection pool is closed:
+
+```python
+import asyncio
+import helo
+
+async def main():
+    async with helo.AsyncHelo() as client:
+        response = await client.sending.transactional(
+            from_={"email": "sender@example.com"},
+            to=[{"email": "user@example.com"}],
+            subject="Hello",
+            text="Hi!",
+        )
+        print(response.message_id)
+
+asyncio.run(main())
+```
+
+## Automatic Retries
+
+Requests that fail with a transient error — connection errors, timeouts, `429`,
+and `5xx` responses — are retried automatically with exponential backoff. When the
+server sends a `Retry-After` header (such as on a `429`), it is honored. Control
+the number of retries with `max_retries` (set to `0` to disable):
+
+```python
+client = helo.Helo(max_retries=5)
 ```
 
 ## Sending
@@ -345,7 +379,15 @@ except helo.APIError as e:
 | `AuthenticationError` | 401 |
 | `PermissionDeniedError` | 403 |
 | `NotFoundError` | 404 |
+| `ConflictError` | 409 |
 | `UnprocessableEntityError` | 422 |
-| `InternalServerError` | 500 |
+| `RateLimitError` | 429 |
+| `InternalServerError` | 5xx |
 
-All exceptions expose `.status_code`, `.error_code`, `.detail`, and `.request_id` attributes.
+All API errors subclass `APIError` and expose `.status_code`, `.error_code`, `.detail`,
+and `.request_id`. `RateLimitError` additionally exposes `.retry_after` (seconds, when
+the server provides it).
+
+Network-level failures (after retries are exhausted) raise `APIConnectionError`, or
+`APITimeoutError` for timeouts. Both subclass `HeloError` — the base class for every
+exception this library raises — so `except helo.HeloError` catches everything.

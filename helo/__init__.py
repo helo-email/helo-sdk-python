@@ -1,12 +1,16 @@
-from ._client import Helo
+from ._client import AsyncHelo, Helo
 from ._exceptions import (
+    APIConnectionError,
     APIError,
+    APITimeoutError,
     AuthenticationError,
     BadRequestError,
+    ConflictError,
     HeloError,
     InternalServerError,
     NotFoundError,
     PermissionDeniedError,
+    RateLimitError,
     UnprocessableEntityError,
 )
 from ._version import __version__
@@ -28,9 +32,9 @@ from .types import (
     DeliveryStats,
     DeliveryType,
     DnsRecordResponse,
+    DnsRecordsResponse,
     DnsRecordStatus,
     DnsRecordType,
-    DnsRecordsResponse,
     DomainChannelResponse,
     DomainResponse,
     DomainWithDnsResponse,
@@ -68,18 +72,29 @@ from .types import (
     WebhookEvent,
     WebhookHeader,
 )
+from .types.params import (
+    AttachmentParam,
+    MailAddressParam,
+    TrackingParam,
+    WebhookHeaderParam,
+)
 
 __all__ = [
     "__version__",
     "Helo",
+    "AsyncHelo",
     # Exceptions
     "HeloError",
     "APIError",
+    "APIConnectionError",
+    "APITimeoutError",
     "BadRequestError",
     "AuthenticationError",
     "PermissionDeniedError",
     "NotFoundError",
+    "ConflictError",
     "UnprocessableEntityError",
+    "RateLimitError",
     "InternalServerError",
     # Enums
     "AttachmentDisposition",
@@ -91,6 +106,11 @@ __all__ = [
     "MailType",
     "SuppressionReason",
     "WebhookEvent",
+    # Request param types
+    "AttachmentParam",
+    "MailAddressParam",
+    "TrackingParam",
+    "WebhookHeaderParam",
     # Shared types
     "MailAddress",
     # Channel types

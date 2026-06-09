@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List, Optional
-
 from .shared import HeloModel, WebhookEvent
 
 
@@ -11,15 +9,15 @@ class WebhookHeader(HeloModel):
 
 
 class WebhookEndpointResponse(HeloModel):
-    id: Optional[str] = None
-    channel_id: Optional[str] = None
-    url: Optional[str] = None
-    payload_signing_key: Optional[str] = None
-    enabled: Optional[bool] = None
-    additional_headers: Optional[List[WebhookHeader]] = None
-    events: Optional[List[WebhookEvent]] = None
+    id: str | None = None
+    channel_id: str | None = None
+    url: str | None = None
+    payload_signing_key: str | None = None
+    enabled: bool | None = None
+    additional_headers: list[WebhookHeader] | None = None
+    events: list[WebhookEvent] | None = None
 
 
 class PaginationResultOfWebhookEndpointResponse(HeloModel):
-    results: List[WebhookEndpointResponse]
+    results: list[WebhookEndpointResponse]
     total_count: int

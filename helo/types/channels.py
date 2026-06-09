@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List, Optional
 
 from .shared import DeliveryType, HeloModel
 
@@ -28,5 +27,5 @@ class ChannelBasicResponse(HeloModel):
 
 
 class PaginationResultOfChannelBasicResponse(HeloModel):
-    results: List[ChannelBasicResponse]
+    results: list[ChannelBasicResponse]
     total_count: int

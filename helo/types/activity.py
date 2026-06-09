@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from .shared import EventType, HeloModel, MailAddress, MailType
 
@@ -10,20 +10,20 @@ class ActivityEvent(HeloModel):
     message_id: str
     channel_id: str
     mail_type: MailType
-    mail_source: Optional[str] = None
+    mail_source: str | None = None
     event_type: EventType
     timestamp: datetime
     subject: str
-    recipients: List[str]
-    tags: Optional[List[str]] = None
-    metadata: Optional[Dict[str, Any]] = None
-    details: Optional[Dict[str, Any]] = None
+    recipients: list[str]
+    tags: list[str] | None = None
+    metadata: dict[str, Any] | None = None
+    details: dict[str, Any] | None = None
 
 
 class PaginatedEventsResponse(HeloModel):
-    after: Optional[int] = None
+    after: int | None = None
     total_count: float
-    results: List[ActivityEvent]
+    results: list[ActivityEvent]
 
 
 class Message(HeloModel):
@@ -35,20 +35,20 @@ class Message(HeloModel):
     delivery_type: str
     status: str
     subject: str
-    recipients: List[str]
+    recipients: list[str]
 
 
 class PaginatedMessagesResponse(HeloModel):
-    after: Optional[int] = None
+    after: int | None = None
     total_count: float
-    results: List[Message]
+    results: list[Message]
 
 
 class MessageEvent(HeloModel):
     event_type: EventType
     timestamp: datetime
-    recipient: Optional[str] = None
-    details: Optional[Dict[str, Any]] = None
+    recipient: str | None = None
+    details: dict[str, Any] | None = None
 
 
 class MessageTracking(HeloModel):
@@ -66,22 +66,22 @@ class MessageDetailsResponse(HeloModel):
     status: str
     subject: str
     from_: MailAddress
-    to: List[MailAddress]
-    cc: Optional[List[MailAddress]] = None
-    bcc: Optional[List[MailAddress]] = None
-    reply_to: Optional[List[MailAddress]] = None
-    text: Optional[str] = None
-    html: Optional[str] = None
-    body: Optional[str] = None
-    tags: Optional[List[str]] = None
-    headers: Optional[Dict[str, Any]] = None
-    metadata: Optional[Dict[str, Any]] = None
-    attachments: Optional[List[str]] = None
+    to: list[MailAddress]
+    cc: list[MailAddress] | None = None
+    bcc: list[MailAddress] | None = None
+    reply_to: list[MailAddress] | None = None
+    text: str | None = None
+    html: str | None = None
+    body: str | None = None
+    tags: list[str] | None = None
+    headers: dict[str, Any] | None = None
+    metadata: dict[str, Any] | None = None
+    attachments: list[str] | None = None
     tracking: MessageTracking
-    events: List[MessageEvent]
+    events: list[MessageEvent]
 
     @classmethod
-    def model_validate(cls, obj: Any, **kwargs: Any) -> "MessageDetailsResponse":
+    def model_validate(cls, obj: Any, **kwargs: Any) -> MessageDetailsResponse:
         if isinstance(obj, dict) and "from" in obj and "from_" not in obj:
             obj = dict(obj)
             obj["from_"] = obj.pop("from")
