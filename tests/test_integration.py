@@ -23,11 +23,13 @@ import os
 import time
 import uuid
 from collections.abc import Callable, Iterator
-from typing import TypeVar
+from typing import TypeVar, Optional
 
 import pytest
 
 import helo
+from helo import APIError
+from tests.helpers.domains import InternalHttpClient
 
 pytestmark = pytest.mark.integration
 
@@ -60,8 +62,8 @@ def eventually(
         time.sleep(interval)
 
 
-def _unique(prefix: str) -> str:
-    return f"{prefix}-{uuid.uuid4().hex[:12]}"
+def _unique(prefix: str | None = None) -> str:
+    return f"{prefix}-{uuid.uuid4().hex[:12]}" if prefix else f"{uuid.uuid4().hex[:12]}"
 
 
 # --------------------------------------------------------------------------- #
@@ -91,9 +93,11 @@ def domain(
     live_client: helo.Helo, channel: helo.ChannelDetailsResponse
 ) -> Iterator[helo.DomainWithDnsResponse]:
     created = live_client.domains.create(
-        name=f"{_unique('mail')}.example.com",
+        name=f"{_unique('mail')}.{_unique()}-test.com",
         channel_ids=[channel.id],
     )
+    internal_client = InternalHttpClient()
+    internal_client.verify_domain(created.id)
     eventually(lambda: live_client.domains.retrieve(created.id), catch=(helo.NotFoundError,))
     try:
         yield created
@@ -127,13 +131,13 @@ def webhook(
 
 
 @pytest.fixture(scope="module")
-def broadcast_id(live_client: helo.Helo, channel: helo.ChannelDetailsResponse) -> str:
+def broadcast_id(live_client: helo.Helo, channel: helo.ChannelDetailsResponse, domain: helo.DomainWithDnsResponse) -> str:
     resp = live_client.sending.broadcast(
-        from_={"email": "newsletter@example.com"},
+        from_={"email": f"newsletter@{domain.name}"},
         template={"subject": "Hello {{name}}", "html": "<p>Hi {{name}}</p>"},
         messages=[
-            {"to": [{"email": "user1@example.com"}], "variables": {"name": "Alice"}},
-            {"to": [{"email": "user2@example.com"}], "variables": {"name": "Bob"}},
+            {"to": [{"email": f"user1@{domain.name}"}], "variables": {"name": "Alice"}},
+            {"to": [{"email": f"user2@{domain.name}"}], "variables": {"name": "Bob"}},
         ],
         channel_id=channel.id,
     )
@@ -197,11 +201,11 @@ class TestChannels:
 
 class TestSending:
     def test_transactional(
-        self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse
+        self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse, domain: helo.DomainWithDnsResponse
     ) -> None:
         resp = live_client.sending.transactional(
-            from_={"email": "sender@example.com", "name": "SDK Test"},
-            to=[{"email": "recipient@example.com"}],
+            from_={"email": f"sender@{domain.name}", "name": "SDK Test"},
+            to=[{"email": f"recipient@{domain.name}"}],
             subject="Integration test",
             html="<p>Hello</p>",
             text="Hello",
@@ -212,19 +216,19 @@ class TestSending:
         assert resp.message_id
 
     def test_transactional_batch(
-        self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse
+        self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse, domain: helo.DomainWithDnsResponse
     ) -> None:
         resp = live_client.sending.transactional_batch(
             requests=[
                 {
-                    "from": {"email": "sender@example.com"},
-                    "to": [{"email": "user1@example.com"}],
+                    "from": {"email": f"sender@{domain.name}"},
+                    "to": [{"email": f"user1@{domain.name}"}],
                     "subject": "Batch 1",
                     "text": "Hi 1",
                 },
                 {
-                    "from": {"email": "sender@example.com"},
-                    "to": [{"email": "user2@example.com"}],
+                    "from": {"email": f"sender@{domain.name}"},
+                    "to": [{"email": f"user2@{domain.name}"}],
                     "subject": "Batch 2",
                     "text": "Hi 2",
                 },
@@ -234,11 +238,11 @@ class TestSending:
         assert len(resp.responses) == 2
 
     def test_broadcast_message(
-        self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse
+        self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse, domain: helo.DomainWithDnsResponse
     ) -> None:
         resp = live_client.sending.broadcast_message(
-            from_={"email": "newsletter@example.com"},
-            to=[{"email": "user@example.com"}],
+            from_={"email": f"newsletter@{domain.name}"},
+            to=[{"email": f"user@{domain.name}"}],
             subject="Digest",
             html="<p>News</p>",
             channel_id=channel.id,
@@ -269,11 +273,11 @@ class TestActivity:
         assert isinstance(result.results, list)
 
     def test_send_then_retrieve_message(
-        self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse
+        self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse, domain: helo.DomainWithDnsResponse
     ) -> None:
         sent = live_client.sending.transactional(
-            from_={"email": "sender@example.com"},
-            to=[{"email": "lookup@example.com"}],
+            from_={"email": f"sender@{domain.name}"},
+            to=[{"email": f"lookup@{domain.name}"}],
             subject="Lookup",
             text="Lookup",
             channel_id=channel.id,
@@ -360,13 +364,13 @@ class TestBroadcasts:
 class TestStatistics:
     def test_totals(self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse) -> None:
         totals = live_client.statistics.retrieve_totals(
-            from_="2024-01-01", to="2024-12-31", channel_id=channel.id
+            from_="2024-10-01T00:00:00Z", to="2024-12-31T23:59:59Z", channel_id=channel.id
         )
         assert totals is not None
 
     def test_daily(self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse) -> None:
         daily = live_client.statistics.retrieve_daily(
-            from_="2024-01-01",
+            from_="2024-11-01",
             to="2024-12-31",
             timezone="America/New_York",
             channel_id=channel.id,
@@ -389,15 +393,16 @@ class TestStatistics:
 
 class TestSuppressions:
     def test_create_list_remove(
-        self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse
+        self, live_client: helo.Helo, channel: helo.ChannelDetailsResponse, domain: helo.DomainWithDnsResponse
     ) -> None:
-        email = f"{_unique('suppressed')}@example.com"
+        email = f"{_unique('suppressed')}@{domain.name}"
 
-        live_client.suppressions.create(
-            channel_id=channel.id,
-            mail_type=helo.MailType.TRANSACTIONAL,
-            emails=[email],
-        )
+        def create_suppression() -> None:
+            live_client.suppressions.create(
+                channel_id=channel.id,
+                mail_type=helo.MailType.TRANSACTIONAL,
+                emails=[email],
+            )
 
         def present() -> None:
             page = live_client.suppressions.list(
@@ -405,6 +410,7 @@ class TestSuppressions:
             )
             assert any(s.email == email for s in page.results)
 
+        eventually(create_suppression)
         eventually(present)
 
         live_client.suppressions.remove(

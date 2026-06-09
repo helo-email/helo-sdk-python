@@ -49,6 +49,7 @@ def _default_headers(api_key: str) -> dict[str, str]:
     return {
         "Authorization": f"Bearer {api_key}",
         "User-Agent": f"helo-python/{__version__}",
+        "Content-Type": "application/json"
     }
 
 
@@ -89,7 +90,11 @@ def _raise_api_error(response: httpx.Response) -> None:
     except Exception:
         data = {}
 
-    message = data.get("detail") or data.get("title") or f"HTTP {response.status_code}"
+    validation_error_str = None
+    validation_errors = data.get("errors")
+    if validation_errors and len(validation_errors) > 0:
+        validation_error_str = ", ".join(f"{key}: {value[0]['message']}" for key, value in validation_errors.items())
+    message = validation_error_str or data.get("detail") or data.get("title") or f"HTTP {response.status_code}"
     cls = _error_class(response.status_code)
     kwargs: dict[str, Any] = dict(
         status_code=response.status_code,
