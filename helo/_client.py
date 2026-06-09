@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import Any, Optional
 
 from ._http import DEFAULT_BASE_URL, DEFAULT_TIMEOUT, HttpClient
@@ -35,12 +36,17 @@ class Helo:
 
     def __init__(
         self,
-        api_key: str,
+        api_key: Optional[str] = None,
         *,
         base_url: str = DEFAULT_BASE_URL,
         timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
-        self._http = HttpClient(api_key=api_key, base_url=base_url, timeout=timeout)
+        resolved_key = api_key or os.environ.get("HELO_API_KEY")
+        if not resolved_key:
+            raise ValueError(
+                "No API key provided. Pass api_key= or set the HELO_API_KEY environment variable."
+            )
+        self._http = HttpClient(api_key=resolved_key, base_url=base_url, timeout=timeout)
         self.activity = ActivityResource(self._http)
         self.broadcasts = BroadcastsResource(self._http)
         self.channels = ChannelsResource(self._http)

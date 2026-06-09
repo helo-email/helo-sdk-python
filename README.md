@@ -15,7 +15,8 @@ Requires Python 3.9+ and installs `httpx` and `pydantic` automatically.
 ```python
 import helo
 
-client = helo.Helo(api_key="your-api-key")
+# API key is read from the HELO_API_KEY environment variable automatically
+client = helo.Helo()
 
 response = client.sending.transactional(
     from_={"email": "sender@example.com", "name": "Acme"},
@@ -29,7 +30,17 @@ print(response.message_id)
 
 ## Authentication
 
-Pass your API key when creating the client:
+Set the `HELO_API_KEY` environment variable and the client picks it up automatically:
+
+```bash
+export HELO_API_KEY="your-api-key"
+```
+
+```python
+client = helo.Helo()
+```
+
+You can also pass the key explicitly — useful when managing multiple accounts or reading from a secrets manager:
 
 ```python
 client = helo.Helo(api_key="your-api-key")
@@ -39,7 +50,6 @@ Optionally override the base URL or timeout (defaults: `https://api.helohq.com`,
 
 ```python
 client = helo.Helo(
-    api_key="your-api-key",
     base_url="https://api.helohq.com",
     timeout=60.0,
 )
@@ -50,7 +60,7 @@ client = helo.Helo(
 Use `with` to ensure the underlying HTTP connection is closed:
 
 ```python
-with helo.Helo(api_key="your-api-key") as client:
+with helo.Helo() as client:
     client.sending.transactional(...)
 ```
 
