@@ -391,3 +391,39 @@ the server provides it).
 Network-level failures (after retries are exhausted) raise `APIConnectionError`, or
 `APITimeoutError` for timeouts. Both subclass `HeloError` — the base class for every
 exception this library raises — so `except helo.HeloError` catches everything.
+
+## Development
+
+Install the dev dependencies and run the checks:
+
+```bash
+pip install -e ".[dev]"
+ruff check .
+mypy helo
+pytest
+```
+
+### Tests
+
+The default `pytest` run uses mocked HTTP responses — it's fast, needs no
+credentials, and is what the main CI workflow runs.
+
+Integration tests (marked `@pytest.mark.integration`) exercise the **full** API
+surface — creating, mutating, and deleting real resources, sending messages, and
+reading back activity and statistics — and are **skipped by default**. They
+target a local instance at `http://localhost:8000` by default and need an API
+key. Run them with the `--integration` flag:
+
+```bash
+export HELO_API_KEY="your-api-key"
+# Optionally point at a different environment (default: http://localhost:8000):
+# export HELO_BASE_URL="https://staging.api.helohq.com"
+pytest --integration
+```
+
+Created resources use unique names and are cleaned up automatically. Without
+`HELO_API_KEY` set, the integration tests skip.
+
+In CI they run via a separate, manually-triggered `Integration` workflow, so
+pushes and PRs stay fast. Point it at a reachable API by setting the
+`HELO_BASE_URL` repository variable and the `HELO_API_KEY` secret.
