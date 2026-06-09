@@ -8,7 +8,7 @@ Python client library for the [Helo](https://helohq.com) email API.
 pip install helo
 ```
 
-Requires Python 3.9+ and installs `httpx` and `pydantic` automatically.
+Requires Python 3.10+ and installs `httpx` and `pydantic` automatically.
 
 ## Quick Start
 

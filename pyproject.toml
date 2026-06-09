@@ -7,7 +7,7 @@ name = "helo"
 version = "0.1.0"
 description = "Python SDK for the Helo API"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 keywords = ["helo", "email", "sdk", "api"]
 classifiers = [
@@ -15,10 +15,10 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Communications :: Email",
 ]
@@ -49,14 +49,14 @@ include = ["helo*"]
 helo = ["py.typed"]
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py310"
 line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 strict = true
 
 [tool.pytest.ini_options]
