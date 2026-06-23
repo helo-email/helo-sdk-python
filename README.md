@@ -5,7 +5,7 @@ Python client library for the [Helo](https://helohq.com) email API.
 ## Installation
 
 ```bash
-pip install helo
+pip install sdk_helo_email
 ```
 
 Requires Python 3.10+ and installs `httpx` and `pydantic` automatically.
@@ -13,10 +13,10 @@ Requires Python 3.10+ and installs `httpx` and `pydantic` automatically.
 ## Quick Start
 
 ```python
-import helo
+import sdk_helo_email
 
 # API key is read from the HELO_API_KEY environment variable automatically
-client = helo.Helo()
+client = sdk_helo_email.Helo()
 
 response = client.sending.transactional(
     from_={"email": "sender@example.com", "name": "Acme"},
@@ -37,19 +37,19 @@ export HELO_API_KEY="your-api-key"
 ```
 
 ```python
-client = helo.Helo()
+client = sdk_helo_email.Helo()
 ```
 
 You can also pass the key explicitly — useful when managing multiple accounts or reading from a secrets manager:
 
 ```python
-client = helo.Helo(api_key="your-api-key")
+client = sdk_helo_email.Helo(api_key="your-api-key")
 ```
 
 Optionally override the base URL, timeout, or retry count (defaults: `https://api.helohq.com`, 30 seconds, 2 retries):
 
 ```python
-client = helo.Helo(
+client = sdk_helo_email.Helo(
     base_url="https://api.helohq.com",
     timeout=60.0,
     max_retries=2,
@@ -61,7 +61,7 @@ client = helo.Helo(
 Use `with` to ensure the underlying HTTP connection is closed:
 
 ```python
-with helo.Helo() as client:
+with sdk_helo_email.Helo() as client:
     client.sending.transactional(...)
 ```
 
@@ -75,7 +75,7 @@ import asyncio
 import helo
 
 async def main():
-    async with helo.AsyncHelo() as client:
+    async with sdk_helo_email.AsyncHelo() as client:
         response = await client.sending.transactional(
             from_={"email": "sender@example.com"},
             to=[{"email": "user@example.com"}],
@@ -95,7 +95,7 @@ server sends a `Retry-After` header (such as on a `429`), it is honored. Control
 the number of retries with `max_retries` (set to `0` to disable):
 
 ```python
-client = helo.Helo(max_retries=5)
+client = sdk_helo_email.Helo(max_retries=5)
 ```
 
 ## Sending
@@ -174,7 +174,7 @@ response = client.sending.broadcast_message(
 # Create
 channel = client.channels.create(
     name="Production",
-    delivery_type=helo.DeliveryType.LIVE,
+    delivery_type=sdk_helo_email.DeliveryType.LIVE,
 )
 
 # List
@@ -200,7 +200,7 @@ events = client.activity.list_events(
     channel_id="ch_abc123",
     start_date="2024-01-01",
     end_date="2024-01-31",
-    event_types=[helo.EventType.DELIVERED, helo.EventType.OPENED],
+    event_types=[sdk_helo_email.EventType.DELIVERED, sdk_helo_email.EventType.OPENED],
     limit=50,
 )
 
@@ -250,7 +250,7 @@ client.domains.delete("dom_abc123")
 # List broadcasts for a channel
 broadcasts = client.broadcasts.list(
     channel_id="ch_abc123",
-    status=helo.BroadcastStatus.SENT,
+    status=sdk_helo_email.BroadcastStatus.SENT,
 )
 
 # Retrieve
@@ -297,21 +297,21 @@ hourly = client.statistics.retrieve_hourly(
 # List
 suppressions = client.suppressions.list(
     channel_id="ch_abc123",
-    mail_type=helo.MailType.TRANSACTIONAL,
-    reason=helo.SuppressionReason.BOUNCED,
+    mail_type=sdk_helo_email.MailType.TRANSACTIONAL,
+    reason=sdk_helo_email.SuppressionReason.BOUNCED,
 )
 
 # Add suppressions
 result = client.suppressions.create(
     channel_id="ch_abc123",
-    mail_type=helo.MailType.TRANSACTIONAL,
+    mail_type=sdk_helo_email.MailType.TRANSACTIONAL,
     emails=["bad@example.com", "invalid@example.com"],
 )
 
 # Remove suppressions
 result = client.suppressions.remove(
     channel_id="ch_abc123",
-    mail_type=helo.MailType.TRANSACTIONAL,
+    mail_type=sdk_helo_email.MailType.TRANSACTIONAL,
     emails=["reactivated@example.com"],
 )
 ```
@@ -324,7 +324,7 @@ result = client.suppressions.remove(
 # Create
 endpoint = client.webhook_endpoints.create(
     url="https://example.com/webhooks/helo",
-    events=[helo.WebhookEvent.DELIVERED, helo.WebhookEvent.BOUNCED],
+    events=[sdk_helo_email.WebhookEvent.DELIVERED, sdk_helo_email.WebhookEvent.BOUNCED],
     channel_id="ch_abc123",
 )
 
@@ -362,13 +362,13 @@ try:
         to=[{"email": "user@example.com"}],
         subject="Test",
     )
-except helo.AuthenticationError as e:
+except sdk_helo_email.AuthenticationError as e:
     print(f"Auth failed: {e} (status {e.status_code})")
-except helo.BadRequestError as e:
+except sdk_helo_email.BadRequestError as e:
     print(f"Bad request: {e.detail}")
-except helo.NotFoundError:
+except sdk_helo_email.NotFoundError:
     print("Resource not found")
-except helo.APIError as e:
+except sdk_helo_email.APIError as e:
     # Catch-all for any other API error
     print(f"API error {e.status_code}: {e}")
 ```
@@ -390,7 +390,7 @@ the server provides it).
 
 Network-level failures (after retries are exhausted) raise `APIConnectionError`, or
 `APITimeoutError` for timeouts. Both subclass `HeloError` — the base class for every
-exception this library raises — so `except helo.HeloError` catches everything.
+exception this library raises — so `except sdk_helo_email.HeloError` catches everything.
 
 ## Development
 

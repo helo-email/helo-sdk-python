@@ -4,7 +4,7 @@ import os
 
 import pytest
 
-import helo
+import sdk_helo_email
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -30,7 +30,7 @@ LIVE_BASE_URL = os.environ.get("HELO_BASE_URL", "http://localhost:8000")
 
 
 @pytest.fixture(scope="session")
-def live_client() -> helo.Helo:
+def live_client() -> sdk_helo_email.Helo:
     """A client pointed at a live API, configured from the environment.
 
     Defaults to a local instance at ``http://localhost:8000``; override with
@@ -40,5 +40,5 @@ def live_client() -> helo.Helo:
     api_key = os.environ.get("HELO_API_KEY")
     if not api_key:
         pytest.skip("HELO_API_KEY not set")
-    with helo.Helo(api_key=api_key, base_url=LIVE_BASE_URL) as client:
+    with sdk_helo_email.Helo(api_key=api_key, base_url=LIVE_BASE_URL) as client:
         yield client

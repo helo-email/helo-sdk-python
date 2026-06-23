@@ -5,8 +5,8 @@ import json as json_lib
 import pytest
 from pytest_httpx import HTTPXMock
 
-import helo
-from helo import AsyncHelo, DeliveryType, Helo, WebhookEvent
+import sdk_helo_email
+from sdk_helo_email import AsyncHelo, DeliveryType, Helo, WebhookEvent
 
 BASE_URL = "http://localhost:8000"
 
@@ -161,7 +161,7 @@ class TestErrors:
             status_code=401,
             json={"title": "Unauthorized", "status": 401, "code": "unauthorized"},
         )
-        with pytest.raises(helo.AuthenticationError) as exc_info:
+        with pytest.raises(sdk_helo_email.AuthenticationError) as exc_info:
             client.channels.list()
         assert exc_info.value.status_code == 401
         assert exc_info.value.error_code == "unauthorized"
@@ -174,7 +174,7 @@ class TestErrors:
             status_code=404,
             json={"title": "Not Found", "status": 404},
         )
-        with pytest.raises(helo.NotFoundError):
+        with pytest.raises(sdk_helo_email.NotFoundError):
             client.channels.retrieve("missing")
 
     def test_conflict_error(self, httpx_mock: HTTPXMock) -> None:
@@ -185,7 +185,7 @@ class TestErrors:
             status_code=409,
             json={"title": "Conflict", "status": 409},
         )
-        with pytest.raises(helo.ConflictError):
+        with pytest.raises(sdk_helo_email.ConflictError):
             client.channels.create(name="dupe", delivery_type=DeliveryType.LIVE)
 
     def test_rate_limit_error_exposes_retry_after(self, httpx_mock: HTTPXMock) -> None:
@@ -197,7 +197,7 @@ class TestErrors:
             headers={"Retry-After": "12"},
             json={"title": "Too Many Requests", "status": 429},
         )
-        with pytest.raises(helo.RateLimitError) as exc_info:
+        with pytest.raises(sdk_helo_email.RateLimitError) as exc_info:
             client.channels.list()
         assert exc_info.value.status_code == 429
         assert exc_info.value.retry_after == 12.0
@@ -207,7 +207,7 @@ class TestRetries:
     def test_retries_on_server_error(
         self, httpx_mock: HTTPXMock, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setattr(helo._http, "_backoff_delay", lambda *a, **k: 0.0)
+        monkeypatch.setattr(sdk_helo_email._http, "_backoff_delay", lambda *a, **k: 0.0)
         client = Helo(api_key="test-key", base_url=BASE_URL, max_retries=2)
         httpx_mock.add_response(method="GET", url=f"{BASE_URL}/channels", status_code=503)
         httpx_mock.add_response(
@@ -222,11 +222,11 @@ class TestRetries:
     def test_gives_up_after_max_retries(
         self, httpx_mock: HTTPXMock, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setattr(helo._http, "_backoff_delay", lambda *a, **k: 0.0)
+        monkeypatch.setattr(sdk_helo_email._http, "_backoff_delay", lambda *a, **k: 0.0)
         client = Helo(api_key="test-key", base_url=BASE_URL, max_retries=1)
         httpx_mock.add_response(method="GET", url=f"{BASE_URL}/channels", status_code=500)
         httpx_mock.add_response(method="GET", url=f"{BASE_URL}/channels", status_code=500)
-        with pytest.raises(helo.InternalServerError):
+        with pytest.raises(sdk_helo_email.InternalServerError):
             client.channels.list()
         assert len(httpx_mock.get_requests()) == 2
 
@@ -281,5 +281,5 @@ class TestAsyncClient:
             json={"title": "Not Found", "status": 404},
         )
         async with async_client as client:
-            with pytest.raises(helo.NotFoundError):
+            with pytest.raises(sdk_helo_email.NotFoundError):
                 await client.channels.retrieve("missing")
