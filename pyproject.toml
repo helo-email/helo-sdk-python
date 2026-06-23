@@ -3,8 +3,8 @@ requires = ["setuptools>=42"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "helo-sdk"
-version = "0.3.0"
+name = "sdk_helo_email"
+dynamic = ["version"]
 description = "Python SDK for the Helo API"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -42,11 +42,14 @@ Homepage = "https://github.com/helo/helo-sdk-python"
 Documentation = "https://docs.helohq.com"
 Repository = "https://github.com/helo/helo-sdk-python"
 
+[tool.setuptools.dynamic]
+version = {attr = "sdk_helo_email._version.__version__"}
+
 [tool.setuptools.packages.find]
-include = ["helo*"]
+include = ["sdk_helo_email*"]
 
 [tool.setuptools.package-data]
-helo = ["py.typed"]
+sdk_helo_email = ["py.typed"]
 
 [tool.ruff]
 target-version = "py310"

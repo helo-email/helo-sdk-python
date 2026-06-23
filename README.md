@@ -72,7 +72,7 @@ a coroutine. Use it as an async context manager so the connection pool is closed
 
 ```python
 import asyncio
-import helo
+import sdk_helo_email
 
 async def main():
     async with sdk_helo_email.AsyncHelo() as client:
@@ -351,10 +351,10 @@ client.webhook_endpoints.delete("whe_abc123")
 
 ## Error Handling
 
-All API errors raise exceptions from the `helo` namespace:
+All API errors raise exceptions from the `sdk_helo_email` namespace:
 
 ```python
-import helo
+import sdk_helo_email
 
 try:
     client.sending.transactional(
@@ -399,7 +399,7 @@ Install the dev dependencies and run the checks:
 ```bash
 pip install -e ".[dev]"
 ruff check .
-mypy helo
+mypy sdk_helo_email
 pytest
 ```
 
