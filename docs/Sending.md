@@ -9,7 +9,7 @@ Send transactional and broadcast emails through the Helo API.
 ```python Sending_transactional
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 response = client.sending.transactional(
     from_={"email": "hello@helohq.com", "name": "Helo"},
@@ -29,7 +29,7 @@ response = client.sending.transactional(
 ```python Sending_transactionalBatch
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 response = client.sending.transactional_batch(
     requests=[
@@ -57,7 +57,7 @@ response = client.sending.transactional_batch(
 ```python Sending_broadcast
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 response = client.sending.broadcast(
     from_={"email": "hello@helohq.com", "name": "Helo"},
@@ -77,7 +77,7 @@ response = client.sending.broadcast(
 ```python Sending_broadcastMessage
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 response = client.sending.broadcast_message(
     from_={"email": "hello@helohq.com", "name": "Helo"},

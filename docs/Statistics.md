@@ -9,7 +9,7 @@ Retrieve delivery statistics. `from_` and `to` are ISO-8601 date strings.
 ```python Statistics_retrieveHourly
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 stats = client.statistics.retrieve_hourly(from_="2024-01-01", to="2024-01-02")
 ```
@@ -21,7 +21,7 @@ stats = client.statistics.retrieve_hourly(from_="2024-01-01", to="2024-01-02")
 ```python Statistics_retrieveDaily
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 stats = client.statistics.retrieve_daily(
     from_="2024-01-01",
@@ -37,7 +37,7 @@ stats = client.statistics.retrieve_daily(
 ```python Statistics_retrieveTotals
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 stats = client.statistics.retrieve_totals(from_="2024-01-01", to="2024-01-31")
 ```

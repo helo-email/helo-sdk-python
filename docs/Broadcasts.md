@@ -9,7 +9,7 @@ Query broadcast campaigns.
 ```python Broadcasts_list
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 broadcasts = client.broadcasts.list(
     channel_id="channel-id",
@@ -24,7 +24,7 @@ broadcasts = client.broadcasts.list(
 ```python Broadcasts_retrieve
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 broadcast = client.broadcasts.retrieve("broadcast-id")
 ```
@@ -36,7 +36,7 @@ broadcast = client.broadcasts.retrieve("broadcast-id")
 ```python Broadcasts_listFailures
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 failures = client.broadcasts.list_failures("broadcast-id")
 ```
@@ -48,7 +48,7 @@ failures = client.broadcasts.list_failures("broadcast-id")
 ```python Broadcasts_listSuppressions
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 suppressions = client.broadcasts.list_suppressions("broadcast-id")
 ```

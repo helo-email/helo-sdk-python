@@ -9,7 +9,7 @@ Manage webhook endpoints. In the Python SDK these live under `client.webhook_end
 ```python Webhooks_create
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 webhook = client.webhook_endpoints.create(
     url="https://example.com/webhooks/helo",
@@ -26,7 +26,7 @@ webhook = client.webhook_endpoints.create(
 ```python Webhooks_list
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 webhooks = client.webhook_endpoints.list(limit=20)
 ```
@@ -38,7 +38,7 @@ webhooks = client.webhook_endpoints.list(limit=20)
 ```python Webhooks_retrieve
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 webhook = client.webhook_endpoints.retrieve("webhook-id")
 ```
@@ -50,7 +50,7 @@ webhook = client.webhook_endpoints.retrieve("webhook-id")
 ```python Webhooks_update
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 webhook = client.webhook_endpoints.update("webhook-id", enabled=False)
 ```
@@ -62,7 +62,7 @@ webhook = client.webhook_endpoints.update("webhook-id", enabled=False)
 ```python Webhooks_delete
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 client.webhook_endpoints.delete("webhook-id")
 ```
@@ -74,7 +74,7 @@ client.webhook_endpoints.delete("webhook-id")
 ```python Webhooks_regenerateSigningKey
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 webhook = client.webhook_endpoints.regenerate_signing_key("webhook-id")
 ```

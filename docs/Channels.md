@@ -9,7 +9,7 @@ Manage sending channels.
 ```python Channels_create
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 channel = client.channels.create(
     name="Transactional",
@@ -25,7 +25,7 @@ channel = client.channels.create(
 ```python Channels_list
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 channels = client.channels.list(limit=20, delivery_type=helo.DeliveryType.LIVE)
 ```
@@ -37,7 +37,7 @@ channels = client.channels.list(limit=20, delivery_type=helo.DeliveryType.LIVE)
 ```python Channels_retrieve
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 channel = client.channels.retrieve("channel-id")
 ```
@@ -49,7 +49,7 @@ channel = client.channels.retrieve("channel-id")
 ```python Channels_update
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 channel = client.channels.update("channel-id", name="Marketing")
 ```
@@ -61,7 +61,7 @@ channel = client.channels.update("channel-id", name="Marketing")
 ```python Channels_delete
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 client.channels.delete("channel-id")
 ```

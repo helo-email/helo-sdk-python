@@ -9,7 +9,7 @@ Manage suppressed recipients.
 ```python Suppressions_list
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 suppressions = client.suppressions.list(
     channel_id="channel-id",
@@ -24,7 +24,7 @@ suppressions = client.suppressions.list(
 ```python Suppressions_create
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 result = client.suppressions.create(
     channel_id="channel-id",
@@ -40,7 +40,7 @@ result = client.suppressions.create(
 ```python Suppressions_remove
 import sdk_helo_email as helo
 
-client = helo.Helo(api_key="your-api-key")
+client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 result = client.suppressions.remove(
     channel_id="channel-id",
