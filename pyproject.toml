@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sdk_helo_email"
 dynamic = ["version"]
-description = "Python SDK for the Helo API"
+description = "Python SDK for the Helo Email API (https://helohq.com)."
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -38,7 +38,7 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/helo/helo-sdk-python"
+Homepage = "https://helohq.com"
 Documentation = "https://docs.helohq.com"
 Repository = "https://github.com/helo/helo-sdk-python"
 
