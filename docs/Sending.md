@@ -12,11 +12,11 @@ import sdk_helo_email as helo
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 response = client.sending.transactional(
-    from_={"email": "hello@helohq.com", "name": "Helo"},
-    to=[{"email": "customer@example.com"}],
+    from_={"email": "from@yourdomain.com", "name": "From name"},
+    to=[{"email": "to@example.com"}],
     subject="Hello from Helo",
-    html="<p>Hello!</p>",
-    text="Hello!",
+    html="<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
+    text="This is a test message, delivered with <3 by Helo.",
     tags=["welcome", "onboarding"],
     channel_id="your-channel-id",
 )
@@ -34,17 +34,19 @@ client = helo.Helo()  # reads HELO_API_KEY from the environment
 response = client.sending.transactional_batch(
     requests=[
         {
-            "from": {"email": "hello@helohq.com", "name": "Helo"},
+            "from": {"email": "from@yourdomain.com", "name": "From name"},
             "to": [{"email": "first@example.com"}],
             "subject": "Hello from Helo",
-            "html": "<p>Hello!</p>",
+            "html": "<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
+            "text": "This is a test message, delivered with <3 by Helo."
         },
         {
-            "from": {"email": "hello@helohq.com", "name": "Helo"},
+            "from": {"email": "from@yourdomain.com", "name": "From name"},
             "to": [{"email": "second@example.com"}],
             "subject": "Hello from Helo",
-            "html": "<p>Hello!</p>",
-        },
+            "html": "<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
+            "text": "This is a test message, delivered with <3 by Helo."
+        }
     ],
     channel_id="your-channel-id",
 )
@@ -60,7 +62,7 @@ import sdk_helo_email as helo
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 response = client.sending.broadcast(
-    from_={"email": "hello@helohq.com", "name": "Helo"},
+    from_={"email": "from@yourdomain.com", "name": "From name"},
     template={"subject": "Product update", "html": "<p>Here's what's new this month.</p>"},
     messages=[
         {"to": [{"email": "first@example.com"}]},
@@ -80,10 +82,10 @@ import sdk_helo_email as helo
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
 response = client.sending.broadcast_message(
-    from_={"email": "hello@helohq.com", "name": "Helo"},
-    to=[{"email": "customer@example.com"}],
+    from_={"email": "from@yourdomain.com", "name": "From name"},
+    to=[{"email": "to@example.com"}],
     subject="Hello from Helo",
-    html="<p>Hello!</p>",
+    html="<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
     channel_id="your-channel-id",
 )
 ```
