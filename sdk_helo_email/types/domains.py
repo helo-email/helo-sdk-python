@@ -23,8 +23,6 @@ class DnsRecordsResponse(HeloModel):
     domain_key_active: DnsRecordResponse | None = None
     domain_key_pending: DnsRecordResponse | None = None
     return_path: list[DnsRecordResponse] | None = None
-    tracking: DnsRecordResponse | None = None
-    unsubscribe: DnsRecordResponse | None = None
 
 
 class DomainResponse(HeloModel):
