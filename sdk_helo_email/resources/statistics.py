@@ -38,7 +38,7 @@ class StatisticsResource(BaseResource):
         tags: Sequence[str] | None = None,
     ) -> StatisticsHourlyResponse:
         params = _range_params(from_, to, channel_id, tags)
-        data = self._http.get("/activity/statistics/hourly", params=params)
+        data = self._http.get("/statistics/hourly", params=params)
         return StatisticsHourlyResponse.model_validate(data)
 
     def retrieve_daily(
@@ -51,7 +51,7 @@ class StatisticsResource(BaseResource):
         tags: Sequence[str] | None = None,
     ) -> StatisticsDailyResponse:
         params = _range_params(from_, to, channel_id, tags, timezone=timezone)
-        data = self._http.get("/activity/statistics/daily", params=params)
+        data = self._http.get("/statistics/daily", params=params)
         return StatisticsDailyResponse.model_validate(data)
 
     def retrieve_totals(
@@ -63,7 +63,7 @@ class StatisticsResource(BaseResource):
         tags: Sequence[str] | None = None,
     ) -> StatisticsTotalsResponse:
         params = _range_params(from_, to, channel_id, tags)
-        data = self._http.get("/activity/statistics/totals", params=params)
+        data = self._http.get("/statistics/totals", params=params)
         return StatisticsTotalsResponse.model_validate(data)
 
 
@@ -77,7 +77,7 @@ class AsyncStatisticsResource(AsyncBaseResource):
         tags: Sequence[str] | None = None,
     ) -> StatisticsHourlyResponse:
         params = _range_params(from_, to, channel_id, tags)
-        data = await self._http.get("/activity/statistics/hourly", params=params)
+        data = await self._http.get("/statistics/hourly", params=params)
         return StatisticsHourlyResponse.model_validate(data)
 
     async def retrieve_daily(
@@ -90,7 +90,7 @@ class AsyncStatisticsResource(AsyncBaseResource):
         tags: Sequence[str] | None = None,
     ) -> StatisticsDailyResponse:
         params = _range_params(from_, to, channel_id, tags, timezone=timezone)
-        data = await self._http.get("/activity/statistics/daily", params=params)
+        data = await self._http.get("/statistics/daily", params=params)
         return StatisticsDailyResponse.model_validate(data)
 
     async def retrieve_totals(
@@ -102,5 +102,5 @@ class AsyncStatisticsResource(AsyncBaseResource):
         tags: Sequence[str] | None = None,
     ) -> StatisticsTotalsResponse:
         params = _range_params(from_, to, channel_id, tags)
-        data = await self._http.get("/activity/statistics/totals", params=params)
+        data = await self._http.get("/statistics/totals", params=params)
         return StatisticsTotalsResponse.model_validate(data)

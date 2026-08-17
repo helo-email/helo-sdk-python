@@ -4,7 +4,7 @@ Retrieve delivery statistics. `from_` and `to` are ISO-8601 date strings.
 
 ## Hourly statistics
 
-`GET /activity/statistics/hourly`
+`GET /statistics/hourly`
 
 ```python Statistics_retrieveHourly
 import sdk_helo_email as helo
@@ -16,7 +16,7 @@ stats = client.statistics.retrieve_hourly(from_="2024-01-01", to="2024-01-02")
 
 ## Daily statistics
 
-`GET /activity/statistics/daily`
+`GET /statistics/daily`
 
 ```python Statistics_retrieveDaily
 import sdk_helo_email as helo
@@ -32,7 +32,7 @@ stats = client.statistics.retrieve_daily(
 
 ## Total statistics
 
-`GET /activity/statistics/totals`
+`GET /statistics/totals`
 
 ```python Statistics_retrieveTotals
 import sdk_helo_email as helo
