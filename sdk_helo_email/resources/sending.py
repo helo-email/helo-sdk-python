@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any
 
-from .._utils import build_body
+from .._utils import build_body, build_headers
 from ..types.params import (
     AttachmentParam,
-    HeadersParam,
     MailAddressParam,
-    MetadataParam,
-    TemplateParam,
-    TrackingParam,
+    SendBroadcastRequestMessageParam,
+    SendBroadcastRequestTemplateParam,
+    SendBroadcastRequestTrackingParam,
+    SendMessageRequestParam,
+    SendMessageRequestTemplateParam,
+    SendMessageRequestTrackingParam,
 )
 from ..types.sending import (
     SendBroadcastResponse,
@@ -18,78 +19,6 @@ from ..types.sending import (
     SendMessageBatchResponse,
 )
 from ._base import AsyncBaseResource, BaseResource
-
-
-def _sending_headers(
-    channel_id: str | None,
-    idempotency_key: str | None,
-) -> dict[str, str] | None:
-    headers: dict[str, str] = {}
-    if channel_id is not None:
-        headers["X-Helo-Channel-Id"] = channel_id
-    if idempotency_key is not None:
-        headers["X-Helo-Idempotency-Key"] = idempotency_key
-    return headers or None
-
-
-def _message_body(
-    *,
-    from_: MailAddressParam,
-    to: Sequence[MailAddressParam],
-    cc: Sequence[MailAddressParam] | None,
-    bcc: Sequence[MailAddressParam] | None,
-    reply_to: Sequence[MailAddressParam] | None,
-    subject: str | None,
-    html: str | None,
-    text: str | None,
-    template: TemplateParam | None,
-    tracking: TrackingParam | None,
-    attachments: Sequence[AttachmentParam] | None,
-    tags: Sequence[str] | None,
-    headers: HeadersParam | None,
-    metadata: MetadataParam | None,
-) -> dict[str, Any]:
-    return build_body(
-        from_=from_,
-        to=to,
-        cc=cc,
-        bcc=bcc,
-        reply_to=reply_to,
-        subject=subject,
-        html=html,
-        text=text,
-        template=template,
-        tracking=tracking,
-        attachments=attachments,
-        tags=tags,
-        headers=headers,
-        metadata=metadata,
-    )
-
-
-def _broadcast_body(
-    *,
-    from_: MailAddressParam,
-    messages: Sequence[dict[str, Any]],
-    template: TemplateParam,
-    reply_to: Sequence[MailAddressParam] | None,
-    tracking: TrackingParam | None,
-    attachments: Sequence[AttachmentParam] | None,
-    tags: Sequence[str] | None,
-    headers: HeadersParam | None,
-    metadata: MetadataParam | None,
-) -> dict[str, Any]:
-    return build_body(
-        from_=from_,
-        messages=messages,
-        template=template,
-        reply_to=reply_to,
-        tracking=tracking,
-        attachments=attachments,
-        tags=tags,
-        headers=headers,
-        metadata=metadata,
-    )
 
 
 class SendingResource(BaseResource):
@@ -104,66 +33,92 @@ class SendingResource(BaseResource):
         subject: str | None = None,
         html: str | None = None,
         text: str | None = None,
-        template: TemplateParam | None = None,
-        tracking: TrackingParam | None = None,
+        template: SendMessageRequestTemplateParam | None = None,
+        tracking: SendMessageRequestTrackingParam | None = None,
         attachments: Sequence[AttachmentParam] | None = None,
         tags: Sequence[str] | None = None,
-        headers: HeadersParam | None = None,
-        metadata: MetadataParam | None = None,
+        headers: dict[str, str] | None = None,
+        metadata: dict[str, str] | None = None,
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendMessageAcceptedResponse:
-        body = _message_body(
-            from_=from_, to=to, cc=cc, bcc=bcc, reply_to=reply_to, subject=subject,
-            html=html, text=text, template=template, tracking=tracking,
-            attachments=attachments, tags=tags, headers=headers, metadata=metadata,
+        """Send a transactional email"""
+
+        body = build_body(
+            from_=from_,
+            to=[str(item) for item in to] if to else None,
+            cc=[str(item) for item in cc] if cc else None,
+            bcc=[str(item) for item in bcc] if bcc else None,
+            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            subject=subject,
+            html=html,
+            text=text,
+            template=template,
+            tracking=tracking,
+            attachments=[str(item) for item in attachments] if attachments else None,
+            tags=tags if tags else None,
+            headers=headers,
+            metadata=metadata,
         )
-        data = self._http.post(
-            "/send/transactional",
-            json=body,
-            headers=_sending_headers(channel_id, idempotency_key),
+        headers = build_headers(
+            **{"X-Helo-Channel-Id": channel_id},
+            **{"X-Helo-Idempotency-Key": idempotency_key},
         )
+        data = self._http.post("/send/transactional", json=body, headers=headers)
         return SendMessageAcceptedResponse.model_validate(data)
 
     def transactional_batch(
         self,
         *,
-        requests: Sequence[dict[str, Any]],
+        requests: Sequence[SendMessageRequestParam],
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendMessageBatchResponse:
-        data = self._http.post(
-            "/send/transactional/batch",
-            json={"requests": requests},
-            headers=_sending_headers(channel_id, idempotency_key),
+        """Send transactional emails in batch"""
+
+        body = build_body(
+            requests=[str(item) for item in requests] if requests else None,
         )
+        headers = build_headers(
+            **{"X-Helo-Channel-Id": channel_id},
+            **{"X-Helo-Idempotency-Key": idempotency_key},
+        )
+        data = self._http.post("/send/transactional/batch", json=body, headers=headers)
         return SendMessageBatchResponse.model_validate(data)
 
     def broadcast(
         self,
         *,
         from_: MailAddressParam,
-        messages: Sequence[dict[str, Any]],
-        template: TemplateParam,
+        template: SendBroadcastRequestTemplateParam,
+        messages: Sequence[SendBroadcastRequestMessageParam],
         reply_to: Sequence[MailAddressParam] | None = None,
-        tracking: TrackingParam | None = None,
+        tracking: SendBroadcastRequestTrackingParam | None = None,
         attachments: Sequence[AttachmentParam] | None = None,
         tags: Sequence[str] | None = None,
-        headers: HeadersParam | None = None,
-        metadata: MetadataParam | None = None,
+        headers: dict[str, str] | None = None,
+        metadata: dict[str, str] | None = None,
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendBroadcastResponse:
-        body = _broadcast_body(
-            from_=from_, messages=messages, template=template, reply_to=reply_to,
-            tracking=tracking, attachments=attachments, tags=tags, headers=headers,
+        """Send a broadcast email"""
+
+        body = build_body(
+            from_=from_,
+            template=template,
+            messages=[str(item) for item in messages] if messages else None,
+            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            tracking=tracking,
+            attachments=[str(item) for item in attachments] if attachments else None,
+            tags=tags if tags else None,
+            headers=headers,
             metadata=metadata,
         )
-        data = self._http.post(
-            "/send/broadcast",
-            json=body,
-            headers=_sending_headers(channel_id, idempotency_key),
+        headers = build_headers(
+            **{"X-Helo-Channel-Id": channel_id},
+            **{"X-Helo-Idempotency-Key": idempotency_key},
         )
+        data = self._http.post("/send/broadcast", json=body, headers=headers)
         return SendBroadcastResponse.model_validate(data)
 
     def broadcast_message(
@@ -177,25 +132,38 @@ class SendingResource(BaseResource):
         subject: str | None = None,
         html: str | None = None,
         text: str | None = None,
-        template: TemplateParam | None = None,
-        tracking: TrackingParam | None = None,
+        template: SendMessageRequestTemplateParam | None = None,
+        tracking: SendMessageRequestTrackingParam | None = None,
         attachments: Sequence[AttachmentParam] | None = None,
         tags: Sequence[str] | None = None,
-        headers: HeadersParam | None = None,
-        metadata: MetadataParam | None = None,
+        headers: dict[str, str] | None = None,
+        metadata: dict[str, str] | None = None,
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendMessageAcceptedResponse:
-        body = _message_body(
-            from_=from_, to=to, cc=cc, bcc=bcc, reply_to=reply_to, subject=subject,
-            html=html, text=text, template=template, tracking=tracking,
-            attachments=attachments, tags=tags, headers=headers, metadata=metadata,
+        """Send a single broadcast email"""
+
+        body = build_body(
+            from_=from_,
+            to=[str(item) for item in to] if to else None,
+            cc=[str(item) for item in cc] if cc else None,
+            bcc=[str(item) for item in bcc] if bcc else None,
+            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            subject=subject,
+            html=html,
+            text=text,
+            template=template,
+            tracking=tracking,
+            attachments=[str(item) for item in attachments] if attachments else None,
+            tags=tags if tags else None,
+            headers=headers,
+            metadata=metadata,
         )
-        data = self._http.post(
-            "/send/broadcast/message",
-            json=body,
-            headers=_sending_headers(channel_id, idempotency_key),
+        headers = build_headers(
+            **{"X-Helo-Channel-Id": channel_id},
+            **{"X-Helo-Idempotency-Key": idempotency_key},
         )
+        data = self._http.post("/send/broadcast/message", json=body, headers=headers)
         return SendMessageAcceptedResponse.model_validate(data)
 
 
@@ -211,66 +179,92 @@ class AsyncSendingResource(AsyncBaseResource):
         subject: str | None = None,
         html: str | None = None,
         text: str | None = None,
-        template: TemplateParam | None = None,
-        tracking: TrackingParam | None = None,
+        template: SendMessageRequestTemplateParam | None = None,
+        tracking: SendMessageRequestTrackingParam | None = None,
         attachments: Sequence[AttachmentParam] | None = None,
         tags: Sequence[str] | None = None,
-        headers: HeadersParam | None = None,
-        metadata: MetadataParam | None = None,
+        headers: dict[str, str] | None = None,
+        metadata: dict[str, str] | None = None,
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendMessageAcceptedResponse:
-        body = _message_body(
-            from_=from_, to=to, cc=cc, bcc=bcc, reply_to=reply_to, subject=subject,
-            html=html, text=text, template=template, tracking=tracking,
-            attachments=attachments, tags=tags, headers=headers, metadata=metadata,
+        """Send a transactional email"""
+
+        body = build_body(
+            from_=from_,
+            to=[str(item) for item in to] if to else None,
+            cc=[str(item) for item in cc] if cc else None,
+            bcc=[str(item) for item in bcc] if bcc else None,
+            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            subject=subject,
+            html=html,
+            text=text,
+            template=template,
+            tracking=tracking,
+            attachments=[str(item) for item in attachments] if attachments else None,
+            tags=tags if tags else None,
+            headers=headers,
+            metadata=metadata,
         )
-        data = await self._http.post(
-            "/send/transactional",
-            json=body,
-            headers=_sending_headers(channel_id, idempotency_key),
+        headers = build_headers(
+            **{"X-Helo-Channel-Id": channel_id},
+            **{"X-Helo-Idempotency-Key": idempotency_key},
         )
+        data = await self._http.post("/send/transactional", json=body, headers=headers)
         return SendMessageAcceptedResponse.model_validate(data)
 
     async def transactional_batch(
         self,
         *,
-        requests: Sequence[dict[str, Any]],
+        requests: Sequence[SendMessageRequestParam],
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendMessageBatchResponse:
-        data = await self._http.post(
-            "/send/transactional/batch",
-            json={"requests": requests},
-            headers=_sending_headers(channel_id, idempotency_key),
+        """Send transactional emails in batch"""
+
+        body = build_body(
+            requests=[str(item) for item in requests] if requests else None,
         )
+        headers = build_headers(
+            **{"X-Helo-Channel-Id": channel_id},
+            **{"X-Helo-Idempotency-Key": idempotency_key},
+        )
+        data = await self._http.post("/send/transactional/batch", json=body, headers=headers)
         return SendMessageBatchResponse.model_validate(data)
 
     async def broadcast(
         self,
         *,
         from_: MailAddressParam,
-        messages: Sequence[dict[str, Any]],
-        template: TemplateParam,
+        template: SendBroadcastRequestTemplateParam,
+        messages: Sequence[SendBroadcastRequestMessageParam],
         reply_to: Sequence[MailAddressParam] | None = None,
-        tracking: TrackingParam | None = None,
+        tracking: SendBroadcastRequestTrackingParam | None = None,
         attachments: Sequence[AttachmentParam] | None = None,
         tags: Sequence[str] | None = None,
-        headers: HeadersParam | None = None,
-        metadata: MetadataParam | None = None,
+        headers: dict[str, str] | None = None,
+        metadata: dict[str, str] | None = None,
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendBroadcastResponse:
-        body = _broadcast_body(
-            from_=from_, messages=messages, template=template, reply_to=reply_to,
-            tracking=tracking, attachments=attachments, tags=tags, headers=headers,
+        """Send a broadcast email"""
+
+        body = build_body(
+            from_=from_,
+            template=template,
+            messages=[str(item) for item in messages] if messages else None,
+            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            tracking=tracking,
+            attachments=[str(item) for item in attachments] if attachments else None,
+            tags=tags if tags else None,
+            headers=headers,
             metadata=metadata,
         )
-        data = await self._http.post(
-            "/send/broadcast",
-            json=body,
-            headers=_sending_headers(channel_id, idempotency_key),
+        headers = build_headers(
+            **{"X-Helo-Channel-Id": channel_id},
+            **{"X-Helo-Idempotency-Key": idempotency_key},
         )
+        data = await self._http.post("/send/broadcast", json=body, headers=headers)
         return SendBroadcastResponse.model_validate(data)
 
     async def broadcast_message(
@@ -284,23 +278,36 @@ class AsyncSendingResource(AsyncBaseResource):
         subject: str | None = None,
         html: str | None = None,
         text: str | None = None,
-        template: TemplateParam | None = None,
-        tracking: TrackingParam | None = None,
+        template: SendMessageRequestTemplateParam | None = None,
+        tracking: SendMessageRequestTrackingParam | None = None,
         attachments: Sequence[AttachmentParam] | None = None,
         tags: Sequence[str] | None = None,
-        headers: HeadersParam | None = None,
-        metadata: MetadataParam | None = None,
+        headers: dict[str, str] | None = None,
+        metadata: dict[str, str] | None = None,
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendMessageAcceptedResponse:
-        body = _message_body(
-            from_=from_, to=to, cc=cc, bcc=bcc, reply_to=reply_to, subject=subject,
-            html=html, text=text, template=template, tracking=tracking,
-            attachments=attachments, tags=tags, headers=headers, metadata=metadata,
+        """Send a single broadcast email"""
+
+        body = build_body(
+            from_=from_,
+            to=[str(item) for item in to] if to else None,
+            cc=[str(item) for item in cc] if cc else None,
+            bcc=[str(item) for item in bcc] if bcc else None,
+            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            subject=subject,
+            html=html,
+            text=text,
+            template=template,
+            tracking=tracking,
+            attachments=[str(item) for item in attachments] if attachments else None,
+            tags=tags if tags else None,
+            headers=headers,
+            metadata=metadata,
         )
-        data = await self._http.post(
-            "/send/broadcast/message",
-            json=body,
-            headers=_sending_headers(channel_id, idempotency_key),
+        headers = build_headers(
+            **{"X-Helo-Channel-Id": channel_id},
+            **{"X-Helo-Idempotency-Key": idempotency_key},
         )
+        data = await self._http.post("/send/broadcast/message", json=body, headers=headers)
         return SendMessageAcceptedResponse.model_validate(data)

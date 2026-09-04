@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any
 
 from .._utils import build_params
 from ..types.activity import (
@@ -9,66 +8,8 @@ from ..types.activity import (
     PaginatedEventsResponse,
     PaginatedMessagesResponse,
 )
-from ..types.shared import EventType, MailType
+from ..types.shared import EventType, MailType, MessageStatus
 from ._base import AsyncBaseResource, BaseResource
-
-
-def _events_params(
-    *,
-    channel_id: str | None,
-    message_id: str | None,
-    after: int | None,
-    start_date: str | None,
-    end_date: str | None,
-    limit: int | None,
-    recipient: str | None,
-    subject: str | None,
-    tags: Sequence[str] | None,
-    mail_type: MailType | None,
-    event_types: Sequence[EventType] | None,
-) -> dict[str, Any] | None:
-    params = build_params(
-        channel_id=channel_id,
-        message_id=message_id,
-        after=after,
-        start_date=start_date,
-        end_date=end_date,
-        limit=limit,
-        recipient=recipient,
-        subject=subject,
-        tags=tags,
-        mail_type=mail_type.value if mail_type else None,
-        event_types=[e.value for e in event_types] if event_types else None,
-    )
-    return params or None
-
-
-def _messages_params(
-    *,
-    channel_id: str | None,
-    after: int | None,
-    start_date: str | None,
-    end_date: str | None,
-    limit: int | None,
-    recipient: str | None,
-    subject: str | None,
-    tags: Sequence[str] | None,
-    mail_type: MailType | None,
-    status: str | None,
-) -> dict[str, Any] | None:
-    params = build_params(
-        channel_id=channel_id,
-        after=after,
-        start_date=start_date,
-        end_date=end_date,
-        limit=limit,
-        recipient=recipient,
-        subject=subject,
-        tags=tags,
-        mail_type=mail_type.value if mail_type else None,
-        status=status,
-    )
-    return params or None
 
 
 class ActivityResource(BaseResource):
@@ -87,7 +28,9 @@ class ActivityResource(BaseResource):
         mail_type: MailType | None = None,
         event_types: Sequence[EventType] | None = None,
     ) -> PaginatedEventsResponse:
-        params = _events_params(
+        """List activity events"""
+
+        params = build_params(
             channel_id=channel_id,
             message_id=message_id,
             after=after,
@@ -96,9 +39,9 @@ class ActivityResource(BaseResource):
             limit=limit,
             recipient=recipient,
             subject=subject,
-            tags=tags,
-            mail_type=mail_type,
-            event_types=event_types,
+            tags=",".join(tags) if tags else None,
+            mail_type=mail_type.value if mail_type else None,
+            event_types=",".join([item.value for item in event_types]) if event_types else None,
         )
         data = self._http.get("/activity/events", params=params)
         return PaginatedEventsResponse.model_validate(data)
@@ -115,9 +58,11 @@ class ActivityResource(BaseResource):
         subject: str | None = None,
         tags: Sequence[str] | None = None,
         mail_type: MailType | None = None,
-        status: str | None = None,
+        status: MessageStatus | None = None,
     ) -> PaginatedMessagesResponse:
-        params = _messages_params(
+        """List messages"""
+
+        params = build_params(
             channel_id=channel_id,
             after=after,
             start_date=start_date,
@@ -125,14 +70,16 @@ class ActivityResource(BaseResource):
             limit=limit,
             recipient=recipient,
             subject=subject,
-            tags=tags,
-            mail_type=mail_type,
-            status=status,
+            tags=",".join(tags) if tags else None,
+            mail_type=mail_type.value if mail_type else None,
+            status=status.value if status else None,
         )
         data = self._http.get("/activity/messages", params=params)
         return PaginatedMessagesResponse.model_validate(data)
 
     def retrieve_message(self, id: str) -> MessageDetailsResponse:
+        """Retrieve message details"""
+
         data = self._http.get(f"/activity/messages/{id}")
         return MessageDetailsResponse.model_validate(data)
 
@@ -153,7 +100,9 @@ class AsyncActivityResource(AsyncBaseResource):
         mail_type: MailType | None = None,
         event_types: Sequence[EventType] | None = None,
     ) -> PaginatedEventsResponse:
-        params = _events_params(
+        """List activity events"""
+
+        params = build_params(
             channel_id=channel_id,
             message_id=message_id,
             after=after,
@@ -162,9 +111,9 @@ class AsyncActivityResource(AsyncBaseResource):
             limit=limit,
             recipient=recipient,
             subject=subject,
-            tags=tags,
-            mail_type=mail_type,
-            event_types=event_types,
+            tags=",".join(tags) if tags else None,
+            mail_type=mail_type.value if mail_type else None,
+            event_types=",".join([item.value for item in event_types]) if event_types else None,
         )
         data = await self._http.get("/activity/events", params=params)
         return PaginatedEventsResponse.model_validate(data)
@@ -181,9 +130,11 @@ class AsyncActivityResource(AsyncBaseResource):
         subject: str | None = None,
         tags: Sequence[str] | None = None,
         mail_type: MailType | None = None,
-        status: str | None = None,
+        status: MessageStatus | None = None,
     ) -> PaginatedMessagesResponse:
-        params = _messages_params(
+        """List messages"""
+
+        params = build_params(
             channel_id=channel_id,
             after=after,
             start_date=start_date,
@@ -191,13 +142,15 @@ class AsyncActivityResource(AsyncBaseResource):
             limit=limit,
             recipient=recipient,
             subject=subject,
-            tags=tags,
-            mail_type=mail_type,
-            status=status,
+            tags=",".join(tags) if tags else None,
+            mail_type=mail_type.value if mail_type else None,
+            status=status.value if status else None,
         )
         data = await self._http.get("/activity/messages", params=params)
         return PaginatedMessagesResponse.model_validate(data)
 
     async def retrieve_message(self, id: str) -> MessageDetailsResponse:
+        """Retrieve message details"""
+
         data = await self._http.get(f"/activity/messages/{id}")
         return MessageDetailsResponse.model_validate(data)

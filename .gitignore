@@ -1,31 +1,13 @@
-# API spec
-openapi.json
-
-# Python
 __pycache__/
 *.py[cod]
 *.egg-info/
-*.egg
-dist/
-build/
 .eggs/
-
-# Virtual environments
+build/
+dist/
 .venv/
 venv/
-env/
-
-# Testing
+.mypy_cache/
 .pytest_cache/
+.ruff_cache/
 .coverage
 htmlcov/
-
-# Type checking
-.mypy_cache/
-
-# IDE
-.vscode/
-.idea/
-
-# macOS
-.DS_Store

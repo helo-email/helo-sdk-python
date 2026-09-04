@@ -20,21 +20,21 @@ class StatisticsTotalsResponse(HeloModel):
     broadcast: DeliveryStats | None = None
 
 
-class DailyStatisticsEntry(HeloModel):
-    timestamp: date
+class StatisticsDailyResponseResult(HeloModel):
+    timestamp: date | None = None
     transactional: DeliveryStats | None = None
     broadcast: DeliveryStats | None = None
 
 
 class StatisticsDailyResponse(HeloModel):
-    results: list[DailyStatisticsEntry]
+    results: list[StatisticsDailyResponseResult] | None = None
 
 
-class HourlyStatisticsEntry(HeloModel):
-    timestamp: datetime
+class StatisticsHourlyResponseResult(HeloModel):
+    timestamp: datetime | None = None
     transactional: DeliveryStats | None = None
     broadcast: DeliveryStats | None = None
 
 
 class StatisticsHourlyResponse(HeloModel):
-    results: list[HourlyStatisticsEntry]
+    results: list[StatisticsHourlyResponseResult] | None = None
