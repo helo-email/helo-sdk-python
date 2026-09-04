@@ -4,7 +4,7 @@ from datetime import datetime
 
 from pydantic import Field
 
-from .shared import EventType, HeloModel, MailType, WebhookEvent
+from .shared import HeloModel, MailType, WebhookEvent
 
 
 class WebhookHeader(HeloModel):
@@ -62,10 +62,10 @@ class UpdateWebhookRequest(HeloModel):
     enabled: bool | None = None
 
 
-class AcceptedWebhookPayload(HeloModel):
-    """Payload delivered for the `accepted` event."""
+class MessageAcceptedWebhookPayload(HeloModel):
+    """Payload delivered for the `message-accepted` event."""
 
-    event_type: EventType
+    event_type: WebhookEvent
     recipients: list[str]
     message_id: str
     channel_id: str
@@ -76,10 +76,10 @@ class AcceptedWebhookPayload(HeloModel):
     timestamp: datetime
 
 
-class ProcessedWebhookPayload(HeloModel):
-    """Payload delivered for the `processed` event."""
+class MessageProcessedWebhookPayload(HeloModel):
+    """Payload delivered for the `message-processed` event."""
 
-    event_type: EventType
+    event_type: WebhookEvent
     recipients: list[str]
     message_id: str
     channel_id: str
@@ -91,15 +91,15 @@ class ProcessedWebhookPayload(HeloModel):
 
 
 class DeliveredDetails(HeloModel):
-    """Details of a `delivered` event."""
+    """Details of an `email-delivered` event."""
 
     response: str | None = None
 
 
-class DeliveredWebhookPayload(HeloModel):
-    """Payload delivered for the `delivered` event."""
+class EmailDeliveredWebhookPayload(HeloModel):
+    """Payload delivered for the `email-delivered` event."""
 
-    event_type: EventType
+    event_type: WebhookEvent
     details: DeliveredDetails | None = None
     recipient: str
     message_id: str
@@ -112,17 +112,17 @@ class DeliveredWebhookPayload(HeloModel):
 
 
 class BouncedDetails(HeloModel):
-    """Details of a `bounced` event."""
+    """Details of an `email-bounced` event."""
 
     type_: str | None = Field(default=None, alias="type")
     sub_type: str | None = None
     code: str | None = None
 
 
-class BouncedWebhookPayload(HeloModel):
-    """Payload delivered for the `bounced` event."""
+class EmailBouncedWebhookPayload(HeloModel):
+    """Payload delivered for the `email-bounced` event."""
 
-    event_type: EventType
+    event_type: WebhookEvent
     details: BouncedDetails | None = None
     recipient: str
     message_id: str
@@ -150,7 +150,7 @@ class DeviceDetails(HeloModel):
 
 
 class OpenedDetails(HeloModel):
-    """Details of an `opened` event."""
+    """Details of an `email-opened` event."""
 
     ip: str | None = None
     country: str | None = None
@@ -159,10 +159,10 @@ class OpenedDetails(HeloModel):
     device: DeviceDetails | None = None
 
 
-class OpenedWebhookPayload(HeloModel):
-    """Payload delivered for the `opened` event."""
+class EmailOpenedWebhookPayload(HeloModel):
+    """Payload delivered for the `email-opened` event."""
 
-    event_type: EventType
+    event_type: WebhookEvent
     details: OpenedDetails | None = None
     recipient: str
     message_id: str
@@ -175,7 +175,7 @@ class OpenedWebhookPayload(HeloModel):
 
 
 class ClickedDetails(HeloModel):
-    """Details of a `clicked` event."""
+    """Details of a `link-clicked` event."""
 
     link: str | None = None
     ip: str | None = None
@@ -185,10 +185,10 @@ class ClickedDetails(HeloModel):
     device: DeviceDetails | None = None
 
 
-class ClickedWebhookPayload(HeloModel):
-    """Payload delivered for the `clicked` event."""
+class LinkClickedWebhookPayload(HeloModel):
+    """Payload delivered for the `link-clicked` event."""
 
-    event_type: EventType
+    event_type: WebhookEvent
     details: ClickedDetails | None = None
     recipient: str
     message_id: str
@@ -201,15 +201,15 @@ class ClickedWebhookPayload(HeloModel):
 
 
 class ComplainedDetails(HeloModel):
-    """Details of a `complained` event."""
+    """Details of a `recipient-complained` event."""
 
     type_: str | None = Field(default=None, alias="type")
 
 
-class ComplainedWebhookPayload(HeloModel):
-    """Payload delivered for the `complained` event."""
+class RecipientComplainedWebhookPayload(HeloModel):
+    """Payload delivered for the `recipient-complained` event."""
 
-    event_type: EventType
+    event_type: WebhookEvent
     details: ComplainedDetails | None = None
     recipient: str
     message_id: str
@@ -222,15 +222,15 @@ class ComplainedWebhookPayload(HeloModel):
 
 
 class UnsubscribedDetails(HeloModel):
-    """Details of an `unsubscribed` event."""
+    """Details of a `recipient-unsubscribed` event."""
 
     ip: str | None = None
 
 
-class UnsubscribedWebhookPayload(HeloModel):
-    """Payload delivered for the `unsubscribed` event."""
+class RecipientUnsubscribedWebhookPayload(HeloModel):
+    """Payload delivered for the `recipient-unsubscribed` event."""
 
-    event_type: EventType
+    event_type: WebhookEvent
     details: UnsubscribedDetails | None = None
     recipient: str
     message_id: str
@@ -243,15 +243,15 @@ class UnsubscribedWebhookPayload(HeloModel):
 
 
 class ResubscribedDetails(HeloModel):
-    """Details of a `resubscribed` event."""
+    """Details of a `recipient-resubscribed` event."""
 
     ip: str | None = None
 
 
-class ResubscribedWebhookPayload(HeloModel):
-    """Payload delivered for the `resubscribed` event."""
+class RecipientResubscribedWebhookPayload(HeloModel):
+    """Payload delivered for the `recipient-resubscribed` event."""
 
-    event_type: EventType
+    event_type: WebhookEvent
     details: ResubscribedDetails | None = None
     recipient: str
     message_id: str

@@ -27,7 +27,7 @@ def test_create(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
 
     client.webhooks.create(
         url="test-url",
-        events=[helo.WebhookEvent.ACCEPTED],
+        events=[helo.WebhookEvent.MESSAGE_ACCEPTED],
         channel_id="550e8400-e29b-41d4-a716-446655440000",
         additional_headers=[{"name": "test-name", "value": "test-value"}],
         enabled=True,
@@ -64,7 +64,7 @@ def test_update(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     client.webhooks.update(
         "550e8400-e29b-41d4-a716-446655440000",
         url="test-url",
-        events=[helo.WebhookEvent.ACCEPTED],
+        events=[helo.WebhookEvent.MESSAGE_ACCEPTED],
         channel_id="550e8400-e29b-41d4-a716-446655440000",
         additional_headers=[{"name": "test-name", "value": "test-value"}],
         enabled=True,
