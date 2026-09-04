@@ -123,8 +123,3 @@ make install
 make check
 make test
 ```
-
----
-
-This SDK is generated from the Helo API OpenAPI description. Do not edit it by
-hand — changes belong in the generator.
