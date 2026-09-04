@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from .shared import HeloModel, SuppressionReason
+from .shared import HeloModel, MailType, SuppressionReason
 
 
 class SuppressionResponse(HeloModel):
@@ -16,6 +16,12 @@ class PaginatedResponseOfSuppressionResponse(HeloModel):
     results: list[SuppressionResponse]
 
 
+class CreateSuppressionsRequest(HeloModel):
+    channel_id: str
+    mail_type: MailType
+    emails: list[str]
+
+
 class SuppressionResult(HeloModel):
     email: str
     success: bool
@@ -24,6 +30,12 @@ class SuppressionResult(HeloModel):
 
 class CreateSuppressionsResponse(HeloModel):
     results: list[SuppressionResult]
+
+
+class RemoveSuppressionsRequest(HeloModel):
+    channel_id: str
+    mail_type: MailType
+    emails: list[str]
 
 
 class RemoveSuppressionResult(HeloModel):

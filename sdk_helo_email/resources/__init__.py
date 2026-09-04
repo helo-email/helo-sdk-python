@@ -5,7 +5,7 @@ from .domains import AsyncDomainsResource, DomainsResource
 from .sending import AsyncSendingResource, SendingResource
 from .statistics import AsyncStatisticsResource, StatisticsResource
 from .suppressions import AsyncSuppressionsResource, SuppressionsResource
-from .webhook_endpoints import AsyncWebhookEndpointsResource, WebhookEndpointsResource
+from .webhooks import AsyncWebhooksResource, WebhooksResource
 
 __all__ = [
     "ActivityResource",
@@ -22,6 +22,6 @@ __all__ = [
     "AsyncStatisticsResource",
     "SuppressionsResource",
     "AsyncSuppressionsResource",
-    "WebhookEndpointsResource",
-    "AsyncWebhookEndpointsResource",
+    "WebhooksResource",
+    "AsyncWebhooksResource",
 ]

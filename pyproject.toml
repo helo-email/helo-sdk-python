@@ -5,22 +5,17 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sdk_helo_email"
 dynamic = ["version"]
-description = "Python SDK for the Helo Email API (https://helohq.com)."
+description = "Helo API"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
-keywords = ["helo", "email", "sdk", "api"]
+keywords = ["helo", "sdk", "api"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Communications :: Email",
 ]
 dependencies = [
     "httpx>=0.25.0",
@@ -38,9 +33,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://helohq.com"
+Homepage = "https://api.helohq.com"
 Documentation = "https://docs.helohq.com"
-Repository = "https://github.com/helo/helo-sdk-python"
+Repository = "https://github.com/helo-email/helo-sdk-python"
 
 [tool.setuptools.dynamic]
 version = {attr = "sdk_helo_email._version.__version__"}
@@ -58,12 +53,14 @@ line-length = 100
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
 
+# Generated tests embed the documentation samples verbatim, and a sample value
+# such as an HTML body is one unbreakable string literal.
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+
 [tool.mypy]
 python_version = "3.10"
 strict = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-markers = [
-    "integration: tests that hit the live Helo API (skipped unless --integration is passed)",
-]

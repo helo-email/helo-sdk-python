@@ -1,31 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any
 
+from .._utils import build_params
 from ..types.statistics import (
     StatisticsDailyResponse,
     StatisticsHourlyResponse,
     StatisticsTotalsResponse,
 )
 from ._base import AsyncBaseResource, BaseResource
-
-
-def _range_params(
-    from_: str,
-    to: str,
-    channel_id: str | None,
-    tags: Sequence[str] | None,
-    timezone: str | None = None,
-) -> dict[str, Any]:
-    params: dict[str, Any] = {"from": from_, "to": to}
-    if timezone is not None:
-        params["timezone"] = timezone
-    if channel_id is not None:
-        params["channelId"] = channel_id
-    if tags is not None:
-        params["tags"] = tags
-    return params
 
 
 class StatisticsResource(BaseResource):
@@ -37,7 +20,14 @@ class StatisticsResource(BaseResource):
         channel_id: str | None = None,
         tags: Sequence[str] | None = None,
     ) -> StatisticsHourlyResponse:
-        params = _range_params(from_, to, channel_id, tags)
+        """Retrieve hourly statistics"""
+
+        params = build_params(
+            from_=from_,
+            to=to,
+            channel_id=channel_id,
+            tags=",".join(tags) if tags else None,
+        )
         data = self._http.get("/statistics/hourly", params=params)
         return StatisticsHourlyResponse.model_validate(data)
 
@@ -50,7 +40,15 @@ class StatisticsResource(BaseResource):
         channel_id: str | None = None,
         tags: Sequence[str] | None = None,
     ) -> StatisticsDailyResponse:
-        params = _range_params(from_, to, channel_id, tags, timezone=timezone)
+        """Retrieve daily statistics"""
+
+        params = build_params(
+            from_=from_,
+            to=to,
+            timezone=timezone,
+            channel_id=channel_id,
+            tags=",".join(tags) if tags else None,
+        )
         data = self._http.get("/statistics/daily", params=params)
         return StatisticsDailyResponse.model_validate(data)
 
@@ -62,7 +60,14 @@ class StatisticsResource(BaseResource):
         channel_id: str | None = None,
         tags: Sequence[str] | None = None,
     ) -> StatisticsTotalsResponse:
-        params = _range_params(from_, to, channel_id, tags)
+        """Retrieve all time statistics"""
+
+        params = build_params(
+            from_=from_,
+            to=to,
+            channel_id=channel_id,
+            tags=",".join(tags) if tags else None,
+        )
         data = self._http.get("/statistics/totals", params=params)
         return StatisticsTotalsResponse.model_validate(data)
 
@@ -76,7 +81,14 @@ class AsyncStatisticsResource(AsyncBaseResource):
         channel_id: str | None = None,
         tags: Sequence[str] | None = None,
     ) -> StatisticsHourlyResponse:
-        params = _range_params(from_, to, channel_id, tags)
+        """Retrieve hourly statistics"""
+
+        params = build_params(
+            from_=from_,
+            to=to,
+            channel_id=channel_id,
+            tags=",".join(tags) if tags else None,
+        )
         data = await self._http.get("/statistics/hourly", params=params)
         return StatisticsHourlyResponse.model_validate(data)
 
@@ -89,7 +101,15 @@ class AsyncStatisticsResource(AsyncBaseResource):
         channel_id: str | None = None,
         tags: Sequence[str] | None = None,
     ) -> StatisticsDailyResponse:
-        params = _range_params(from_, to, channel_id, tags, timezone=timezone)
+        """Retrieve daily statistics"""
+
+        params = build_params(
+            from_=from_,
+            to=to,
+            timezone=timezone,
+            channel_id=channel_id,
+            tags=",".join(tags) if tags else None,
+        )
         data = await self._http.get("/statistics/daily", params=params)
         return StatisticsDailyResponse.model_validate(data)
 
@@ -101,6 +121,13 @@ class AsyncStatisticsResource(AsyncBaseResource):
         channel_id: str | None = None,
         tags: Sequence[str] | None = None,
     ) -> StatisticsTotalsResponse:
-        params = _range_params(from_, to, channel_id, tags)
+        """Retrieve all time statistics"""
+
+        params = build_params(
+            from_=from_,
+            to=to,
+            channel_id=channel_id,
+            tags=",".join(tags) if tags else None,
+        )
         data = await self._http.get("/statistics/totals", params=params)
         return StatisticsTotalsResponse.model_validate(data)

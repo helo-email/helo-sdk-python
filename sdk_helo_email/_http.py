@@ -48,8 +48,8 @@ _RETRY_STATUS = frozenset({408, 429, 500, 502, 503, 504})
 def _default_headers(api_key: str) -> dict[str, str]:
     return {
         "Authorization": f"Bearer {api_key}",
-        "User-Agent": f"helo-python/{__version__}",
-        "Content-Type": "application/json"
+        "User-Agent": f"sdk-helo-email/{__version__}",
+        "Content-Type": "application/json",
     }
 
 
@@ -84,17 +84,25 @@ def _backoff_delay(attempt: int, retry_after: float | None) -> float:
     return random.uniform(0, base)
 
 
+def _error_message(data: dict[str, Any], status_code: int) -> str:
+    validation_errors = data.get("errors")
+    if validation_errors:
+        return ", ".join(
+            f"{field}: {problems[0]['message']}"
+            for field, problems in validation_errors.items()
+            if problems
+        )
+    detail = data.get("detail") or data.get("title")
+    return str(detail) if detail else f"HTTP {status_code}"
+
+
 def _raise_api_error(response: httpx.Response) -> None:
     try:
         data: dict[str, Any] = response.json()
     except Exception:
         data = {}
 
-    validation_error_str = None
-    validation_errors = data.get("errors")
-    if validation_errors and len(validation_errors) > 0:
-        validation_error_str = ", ".join(f"{key}: {value[0]['message']}" for key, value in validation_errors.items())
-    message = validation_error_str or data.get("detail") or data.get("title") or f"HTTP {response.status_code}"
+    message = _error_message(data, response.status_code)
     cls = _error_class(response.status_code)
     kwargs: dict[str, Any] = dict(
         status_code=response.status_code,
@@ -104,8 +112,8 @@ def _raise_api_error(response: httpx.Response) -> None:
         response_data=data,
     )
     if cls is RateLimitError:
-        raise RateLimitError(str(message), retry_after=_parse_retry_after(response), **kwargs)
-    raise cls(str(message), **kwargs)
+        raise RateLimitError(message, retry_after=_parse_retry_after(response), **kwargs)
+    raise cls(message, **kwargs)
 
 
 def _handle_response(response: httpx.Response) -> Any:
@@ -184,22 +192,34 @@ class HttpClient:
     ) -> Any:
         return self._request("POST", path, json=json, params=params, headers=headers)
 
+    def put(
+        self,
+        path: str,
+        *,
+        json: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> Any:
+        return self._request("PUT", path, json=json, params=params, headers=headers)
+
     def patch(
         self,
         path: str,
         *,
         json: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
     ) -> Any:
-        return self._request("PATCH", path, json=json, headers=headers)
+        return self._request("PATCH", path, json=json, params=params, headers=headers)
 
     def delete(
         self,
         path: str,
         *,
+        params: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
     ) -> None:
-        self._request("DELETE", path, headers=headers)
+        self._request("DELETE", path, params=params, headers=headers)
 
     def close(self) -> None:
         self._client.close()
@@ -277,22 +297,34 @@ class AsyncHttpClient:
     ) -> Any:
         return await self._request("POST", path, json=json, params=params, headers=headers)
 
+    async def put(
+        self,
+        path: str,
+        *,
+        json: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> Any:
+        return await self._request("PUT", path, json=json, params=params, headers=headers)
+
     async def patch(
         self,
         path: str,
         *,
         json: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
     ) -> Any:
-        return await self._request("PATCH", path, json=json, headers=headers)
+        return await self._request("PATCH", path, json=json, params=params, headers=headers)
 
     async def delete(
         self,
         path: str,
         *,
+        params: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
     ) -> None:
-        await self._request("DELETE", path, headers=headers)
+        await self._request("DELETE", path, params=params, headers=headers)
 
     async def aclose(self) -> None:
         await self._client.aclose()

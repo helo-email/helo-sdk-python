@@ -1,80 +1,109 @@
 # Webhooks
 
-Manage webhook endpoints. In the Python SDK these live under `client.webhook_endpoints`.
+Create and manage webhooks for event notifications.
 
-## Create a webhook endpoint
+| Method | HTTP request | Description |
+| ------ | ------------ | ----------- |
+| [**webhooks.list**](#list) | **GET** /webhooks | List all webhooks |
+| [**webhooks.create**](#create) | **POST** /webhooks | Create a webhook |
+| [**webhooks.retrieve**](#retrieve) | **GET** /webhooks/{id} | Retrieve a webhook |
+| [**webhooks.update**](#update) | **PATCH** /webhooks/{id} | Update a webhook |
+| [**webhooks.delete**](#delete) | **DELETE** /webhooks/{id} | Delete a webhook |
+| [**webhooks.regenerate_signing_key**](#regenerate_signing_key) | **POST** /webhooks/{id}/regenerate-signing-key | Regenerate webhook signing key |
 
-`POST /webhooks`
-
-```python Webhooks_create
-import sdk_helo_email as helo
-
-client = helo.Helo()  # reads HELO_API_KEY from the environment
-
-webhook = client.webhook_endpoints.create(
-    url="https://example.com/webhooks/helo",
-    events=[helo.WebhookEvent.DELIVERED, helo.WebhookEvent.BOUNCED],
-    channel_id="channel-id",
-    enabled=True,
-)
-```
-
-## List webhook endpoints
+## list
 
 `GET /webhooks`
+
+Retrieves all webhooks configured for the account.
 
 ```python Webhooks_list
 import sdk_helo_email as helo
 
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
-webhooks = client.webhook_endpoints.list(limit=20)
+pagination_result_of_webhook = client.webhooks.list(limit=10, offset=10)
 ```
 
-## Retrieve a webhook endpoint
+## create
+
+`POST /webhooks`
+
+Registers a new webhook to receive event notifications.
+
+```python Webhooks_create
+import sdk_helo_email as helo
+
+client = helo.Helo()  # reads HELO_API_KEY from the environment
+
+webhook = client.webhooks.create(
+    url="test-url",
+    events=[helo.WebhookEvent.ACCEPTED],
+    channel_id="550e8400-e29b-41d4-a716-446655440000",
+    additional_headers=[{"name": "test-name", "value": "test-value"}],
+    enabled=True,
+)
+```
+
+## retrieve
 
 `GET /webhooks/{id}`
+
+Fetches the details and configuration of a specific webhook.
 
 ```python Webhooks_retrieve
 import sdk_helo_email as helo
 
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
-webhook = client.webhook_endpoints.retrieve("webhook-id")
+webhook = client.webhooks.retrieve("550e8400-e29b-41d4-a716-446655440000")
 ```
 
-## Update a webhook endpoint
+## update
 
 `PATCH /webhooks/{id}`
+
+Modifies an existing webhook by ID.
 
 ```python Webhooks_update
 import sdk_helo_email as helo
 
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
-webhook = client.webhook_endpoints.update("webhook-id", enabled=False)
+webhook = client.webhooks.update(
+    "550e8400-e29b-41d4-a716-446655440000",
+    url="test-url",
+    events=[helo.WebhookEvent.ACCEPTED],
+    channel_id="550e8400-e29b-41d4-a716-446655440000",
+    additional_headers=[{"name": "test-name", "value": "test-value"}],
+    enabled=True,
+)
 ```
 
-## Delete a webhook endpoint
+## delete
 
 `DELETE /webhooks/{id}`
+
+Permanently removes a webhook.
 
 ```python Webhooks_delete
 import sdk_helo_email as helo
 
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
-client.webhook_endpoints.delete("webhook-id")
+client.webhooks.delete("550e8400-e29b-41d4-a716-446655440000")
 ```
 
-## Regenerate a webhook signing key
+## regenerate_signing_key
 
 `POST /webhooks/{id}/regenerate-signing-key`
+
+Regenerate the signing key used for the webhook signature. This operation replaces the old key.
 
 ```python Webhooks_regenerateSigningKey
 import sdk_helo_email as helo
 
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
-webhook = client.webhook_endpoints.regenerate_signing_key("webhook-id")
+webhook = client.webhooks.regenerate_signing_key("550e8400-e29b-41d4-a716-446655440000")
 ```

@@ -8,7 +8,7 @@ class HeloError(Exception):
 
 
 class APIConnectionError(HeloError):
-    """Raised when the request could not reach the Helo API (network error, timeout)."""
+    """Raised when the request could not reach the API (network error, timeout)."""
 
     def __init__(self, message: str = "Connection error.") -> None:
         super().__init__(message)
@@ -22,7 +22,7 @@ class APITimeoutError(APIConnectionError):
 
 
 class APIError(HeloError):
-    """Raised when the Helo API returns a non-success status code."""
+    """Raised when the API returns a non-success status code."""
 
     def __init__(
         self,

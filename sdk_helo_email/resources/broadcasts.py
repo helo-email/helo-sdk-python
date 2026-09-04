@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
-
+from .._utils import build_params
 from ..types.broadcasts import (
     BroadcastDetailsResponse,
     PaginatedResponseOfBroadcast,
@@ -10,25 +9,6 @@ from ..types.broadcasts import (
 )
 from ..types.shared import BroadcastStatus
 from ._base import AsyncBaseResource, BaseResource
-
-
-def _list_params(
-    channel_id: str,
-    status: BroadcastStatus | None,
-    subject: str | None,
-    limit: int | None,
-    offset: int | None,
-) -> dict[str, Any]:
-    params: dict[str, Any] = {"channelId": channel_id}
-    if status is not None:
-        params["status"] = status.value
-    if subject is not None:
-        params["subject"] = subject
-    if limit is not None:
-        params["limit"] = limit
-    if offset is not None:
-        params["offset"] = offset
-    return params
 
 
 class BroadcastsResource(BaseResource):
@@ -41,20 +21,46 @@ class BroadcastsResource(BaseResource):
         limit: int | None = None,
         offset: int | None = None,
     ) -> PaginatedResponseOfBroadcast:
-        params = _list_params(channel_id, status, subject, limit, offset)
+        """List broadcasts"""
+
+        params = build_params(
+            channel_id=channel_id,
+            status=status.value if status else None,
+            subject=subject,
+            limit=limit,
+            offset=offset,
+        )
         data = self._http.get("/broadcasts", params=params)
         return PaginatedResponseOfBroadcast.model_validate(data)
 
     def retrieve(self, id: str) -> BroadcastDetailsResponse:
+        """Retrieve a broadcast"""
+
         data = self._http.get(f"/broadcasts/{id}")
         return BroadcastDetailsResponse.model_validate(data)
 
-    def list_failures(self, id: str) -> PaginatedResponseOfBroadcastFailure:
-        data = self._http.get(f"/broadcasts/{id}/failures")
+    def list_failures(
+        self, id: str, *, limit: int | None = None, offset: int | None = None
+    ) -> PaginatedResponseOfBroadcastFailure:
+        """List failed broadcast messages"""
+
+        params = build_params(
+            limit=limit,
+            offset=offset,
+        )
+        data = self._http.get(f"/broadcasts/{id}/failures", params=params)
         return PaginatedResponseOfBroadcastFailure.model_validate(data)
 
-    def list_suppressions(self, id: str) -> PaginatedResponseOfBroadcastSuppression:
-        data = self._http.get(f"/broadcasts/{id}/suppressions")
+    def list_suppressions(
+        self, id: str, *, limit: int | None = None, offset: int | None = None
+    ) -> PaginatedResponseOfBroadcastSuppression:
+        """List broadcast suppressed recipients"""
+
+        params = build_params(
+            limit=limit,
+            offset=offset,
+        )
+        data = self._http.get(f"/broadcasts/{id}/suppressions", params=params)
         return PaginatedResponseOfBroadcastSuppression.model_validate(data)
 
 
@@ -68,18 +74,44 @@ class AsyncBroadcastsResource(AsyncBaseResource):
         limit: int | None = None,
         offset: int | None = None,
     ) -> PaginatedResponseOfBroadcast:
-        params = _list_params(channel_id, status, subject, limit, offset)
+        """List broadcasts"""
+
+        params = build_params(
+            channel_id=channel_id,
+            status=status.value if status else None,
+            subject=subject,
+            limit=limit,
+            offset=offset,
+        )
         data = await self._http.get("/broadcasts", params=params)
         return PaginatedResponseOfBroadcast.model_validate(data)
 
     async def retrieve(self, id: str) -> BroadcastDetailsResponse:
+        """Retrieve a broadcast"""
+
         data = await self._http.get(f"/broadcasts/{id}")
         return BroadcastDetailsResponse.model_validate(data)
 
-    async def list_failures(self, id: str) -> PaginatedResponseOfBroadcastFailure:
-        data = await self._http.get(f"/broadcasts/{id}/failures")
+    async def list_failures(
+        self, id: str, *, limit: int | None = None, offset: int | None = None
+    ) -> PaginatedResponseOfBroadcastFailure:
+        """List failed broadcast messages"""
+
+        params = build_params(
+            limit=limit,
+            offset=offset,
+        )
+        data = await self._http.get(f"/broadcasts/{id}/failures", params=params)
         return PaginatedResponseOfBroadcastFailure.model_validate(data)
 
-    async def list_suppressions(self, id: str) -> PaginatedResponseOfBroadcastSuppression:
-        data = await self._http.get(f"/broadcasts/{id}/suppressions")
+    async def list_suppressions(
+        self, id: str, *, limit: int | None = None, offset: int | None = None
+    ) -> PaginatedResponseOfBroadcastSuppression:
+        """List broadcast suppressed recipients"""
+
+        params = build_params(
+            limit=limit,
+            offset=offset,
+        )
+        data = await self._http.get(f"/broadcasts/{id}/suppressions", params=params)
         return PaginatedResponseOfBroadcastSuppression.model_validate(data)

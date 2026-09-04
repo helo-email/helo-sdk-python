@@ -19,36 +19,28 @@ from .resources import (
     AsyncSendingResource,
     AsyncStatisticsResource,
     AsyncSuppressionsResource,
-    AsyncWebhookEndpointsResource,
+    AsyncWebhooksResource,
     BroadcastsResource,
     ChannelsResource,
     DomainsResource,
     SendingResource,
     StatisticsResource,
     SuppressionsResource,
-    WebhookEndpointsResource,
+    WebhooksResource,
 )
 
 
 def _resolve_api_key(api_key: str | None) -> str:
-    resolved_key = api_key or os.environ.get("HELO_API_KEY")
-    if not resolved_key:
+    resolved = api_key or os.environ.get("HELO_API_KEY")
+    if not resolved:
         raise ValueError(
             "No API key provided. Pass api_key= or set the HELO_API_KEY environment variable."
         )
-    return resolved_key
+    return resolved
 
 
 class Helo:
-    """Synchronous client for the Helo API.
-
-    Usage::
-
-        import helo
-
-        client = helo.Helo(api_key="your-api-key")
-        channel = client.channels.create(name="my-channel", delivery_type=helo.DeliveryType.LIVE)
-    """
+    """Synchronous client for the Helo API."""
 
     activity: ActivityResource
     broadcasts: BroadcastsResource
@@ -57,7 +49,7 @@ class Helo:
     sending: SendingResource
     statistics: StatisticsResource
     suppressions: SuppressionsResource
-    webhook_endpoints: WebhookEndpointsResource
+    webhooks: WebhooksResource
 
     def __init__(
         self,
@@ -80,7 +72,7 @@ class Helo:
         self.sending = SendingResource(self._http)
         self.statistics = StatisticsResource(self._http)
         self.suppressions = SuppressionsResource(self._http)
-        self.webhook_endpoints = WebhookEndpointsResource(self._http)
+        self.webhooks = WebhooksResource(self._http)
 
     def close(self) -> None:
         self._http.close()
@@ -93,21 +85,7 @@ class Helo:
 
 
 class AsyncHelo:
-    """Asynchronous client for the Helo API.
-
-    Usage::
-
-        import asyncio
-        import helo
-
-        async def main():
-            async with helo.AsyncHelo(api_key="your-api-key") as client:
-                channel = await client.channels.create(
-                    name="my-channel", delivery_type=helo.DeliveryType.LIVE
-                )
-
-        asyncio.run(main())
-    """
+    """Asynchronous client for the Helo API."""
 
     activity: AsyncActivityResource
     broadcasts: AsyncBroadcastsResource
@@ -116,7 +94,7 @@ class AsyncHelo:
     sending: AsyncSendingResource
     statistics: AsyncStatisticsResource
     suppressions: AsyncSuppressionsResource
-    webhook_endpoints: AsyncWebhookEndpointsResource
+    webhooks: AsyncWebhooksResource
 
     def __init__(
         self,
@@ -139,7 +117,7 @@ class AsyncHelo:
         self.sending = AsyncSendingResource(self._http)
         self.statistics = AsyncStatisticsResource(self._http)
         self.suppressions = AsyncSuppressionsResource(self._http)
-        self.webhook_endpoints = AsyncWebhookEndpointsResource(self._http)
+        self.webhooks = AsyncWebhooksResource(self._http)
 
     async def close(self) -> None:
         await self._http.aclose()
