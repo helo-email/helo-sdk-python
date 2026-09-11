@@ -1,6 +1,6 @@
 # Helo Python SDK
 
-Helo API
+Helo Email API (https://helohq.com)
 
 ## Installation
 

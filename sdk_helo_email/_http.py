@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import email.utils
+import platform
 import random
 import time
 from typing import Any
@@ -45,10 +46,22 @@ _STATUS_TO_ERROR: dict[int, type[APIError]] = {
 _RETRY_STATUS = frozenset({408, 429, 500, 502, 503, 504})
 
 
+def _build_user_agent() -> str:
+    """Name the package, its version and the interpreter carrying it."""
+    return (
+        f"sdk-helo-email/{__version__} "
+        f"(python {platform.python_version()}; "
+        f"{platform.system().lower() or 'unknown'}/{platform.machine() or 'unknown'})"
+    )
+
+
+USER_AGENT = _build_user_agent()
+
+
 def _default_headers(api_key: str) -> dict[str, str]:
     return {
         "Authorization": f"Bearer {api_key}",
-        "User-Agent": f"sdk-helo-email/{__version__}",
+        "User-Agent": USER_AGENT,
         "Content-Type": "application/json",
     }
 

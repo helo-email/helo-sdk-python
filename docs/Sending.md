@@ -4,23 +4,23 @@ Send transactional and broadcast emails.
 
 | Method | HTTP request | Description |
 | ------ | ------------ | ----------- |
-| [**sending.transactional**](#transactional) | **POST** /send/transactional | Send a transactional email |
-| [**sending.transactional_batch**](#transactional_batch) | **POST** /send/transactional/batch | Send transactional emails in batch |
-| [**sending.broadcast**](#broadcast) | **POST** /send/broadcast | Send a broadcast email |
-| [**sending.broadcast_message**](#broadcast_message) | **POST** /send/broadcast/message | Send a single broadcast email |
+| [**sending.send_transactional**](#send_transactional) | **POST** /send/transactional | Send a transactional email |
+| [**sending.send_transactional_batch**](#send_transactional_batch) | **POST** /send/transactional/batch | Send transactional emails in batch |
+| [**sending.send_broadcast**](#send_broadcast) | **POST** /send/broadcast |  |
+| [**sending.send_broadcast_message**](#send_broadcast_message) | **POST** /send/broadcast/message | Send a single broadcast email |
 
-## transactional
+## send_transactional
 
 `POST /send/transactional`
 
 Sends a single transactional email such as receipts, confirmations, or notifications.
 
-```python Sending_transactional
+```python Sending_sendTransactional
 import sdk_helo_email as helo
 
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
-send_message_accepted = client.sending.transactional(
+send_message_accepted = client.sending.send_transactional(
     from_={"email": "from@yourdomain.com", "name": "From name"},
     to=[{"email": "to@example.com", "name": "To name"}],
     cc=[{"email": "cc@example.com", "name": "Cc name"}],
@@ -51,18 +51,18 @@ send_message_accepted = client.sending.transactional(
 )
 ```
 
-## transactional_batch
+## send_transactional_batch
 
 `POST /send/transactional/batch`
 
 Sends multiple transactional emails in a single API request for better performance.
 
-```python Sending_transactionalBatch
+```python Sending_sendTransactionalBatch
 import sdk_helo_email as helo
 
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
-send_message_batch = client.sending.transactional_batch(
+send_message_batch = client.sending.send_transactional_batch(
     requests=[
         {
             "from": {"email": "from@yourdomain.com", "name": "From name"},
@@ -78,18 +78,16 @@ send_message_batch = client.sending.transactional_batch(
 )
 ```
 
-## broadcast
+## send_broadcast
 
 `POST /send/broadcast`
 
-Sends a broadcast email to multiple recipients for marketing or announcement purposes.
-
-```python Sending_broadcast
+```python Sending_sendBroadcast
 import sdk_helo_email as helo
 
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
-send_broadcast = client.sending.broadcast(
+send_broadcast = client.sending.send_broadcast(
     from_={"email": "test@example.com", "name": "test-name"},
     template={
         "subject": "test-subject",
@@ -120,18 +118,18 @@ send_broadcast = client.sending.broadcast(
 )
 ```
 
-## broadcast_message
+## send_broadcast_message
 
 `POST /send/broadcast/message`
 
 Sends a single broadcast email message.
 
-```python Sending_broadcastMessage
+```python Sending_sendBroadcastMessage
 import sdk_helo_email as helo
 
 client = helo.Helo()  # reads HELO_API_KEY from the environment
 
-send_message_accepted = client.sending.broadcast_message(
+send_message_accepted = client.sending.send_broadcast_message(
     from_={"email": "from@yourdomain.com", "name": "From name"},
     to=[{"email": "to@example.com", "name": "To name"}],
     cc=[{"email": "cc@example.com", "name": "Cc name"}],

@@ -5,13 +5,13 @@ from pytest_httpx import HTTPXMock
 import sdk_helo_email as helo
 
 
-def test_transactional(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_send_transactional(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
     )
 
-    client.sending.transactional(
+    client.sending.send_transactional(
         from_={"email": "from@yourdomain.com", "name": "From name"},
         to=[{"email": "to@example.com", "name": "To name"}],
         cc=[{"email": "cc@example.com", "name": "Cc name"}],
@@ -49,13 +49,13 @@ def test_transactional(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_transactional_batch(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_send_transactional_batch(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={"responses": [{"status": "example"}]},
     )
 
-    client.sending.transactional_batch(
+    client.sending.send_transactional_batch(
         requests=[
             {
                 "from": {"email": "from@yourdomain.com", "name": "From name"},
@@ -78,13 +78,13 @@ def test_transactional_batch(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_broadcast(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_send_broadcast(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
     )
 
-    client.sending.broadcast(
+    client.sending.send_broadcast(
         from_={"email": "test@example.com", "name": "test-name"},
         template={
             "subject": "test-subject",
@@ -122,13 +122,13 @@ def test_broadcast(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_broadcast_message(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_send_broadcast_message(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
     )
 
-    client.sending.broadcast_message(
+    client.sending.send_broadcast_message(
         from_={"email": "from@yourdomain.com", "name": "From name"},
         to=[{"email": "to@example.com", "name": "To name"}],
         cc=[{"email": "cc@example.com", "name": "Cc name"}],
@@ -166,14 +166,16 @@ def test_broadcast_message(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-async def test_transactional_async(async_client: helo.AsyncHelo, httpx_mock: HTTPXMock) -> None:
+async def test_send_transactional_async(
+    async_client: helo.AsyncHelo, httpx_mock: HTTPXMock
+) -> None:
     """The async resource is generated from the same operation, so one call proves the pair."""
     httpx_mock.add_response(
         method="POST",
         json={},
     )
 
-    await async_client.sending.transactional(
+    await async_client.sending.send_transactional(
         from_={"email": "from@yourdomain.com", "name": "From name"},
         to=[{"email": "to@example.com", "name": "To name"}],
         cc=[{"email": "cc@example.com", "name": "Cc name"}],

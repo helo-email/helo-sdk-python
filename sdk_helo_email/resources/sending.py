@@ -22,7 +22,7 @@ from ._base import AsyncBaseResource, BaseResource
 
 
 class SendingResource(BaseResource):
-    def transactional(
+    def send_transactional(
         self,
         *,
         from_: MailAddressParam,
@@ -67,7 +67,7 @@ class SendingResource(BaseResource):
         data = self._http.post("/send/transactional", json=body, headers=headers)
         return SendMessageAcceptedResponse.model_validate(data)
 
-    def transactional_batch(
+    def send_transactional_batch(
         self,
         *,
         requests: Sequence[SendMessageRequestParam],
@@ -86,7 +86,7 @@ class SendingResource(BaseResource):
         data = self._http.post("/send/transactional/batch", json=body, headers=headers)
         return SendMessageBatchResponse.model_validate(data)
 
-    def broadcast(
+    def send_broadcast(
         self,
         *,
         from_: MailAddressParam,
@@ -101,8 +101,6 @@ class SendingResource(BaseResource):
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendBroadcastResponse:
-        """Send a broadcast email"""
-
         body = build_body(
             from_=from_,
             template=template,
@@ -121,7 +119,7 @@ class SendingResource(BaseResource):
         data = self._http.post("/send/broadcast", json=body, headers=headers)
         return SendBroadcastResponse.model_validate(data)
 
-    def broadcast_message(
+    def send_broadcast_message(
         self,
         *,
         from_: MailAddressParam,
@@ -168,7 +166,7 @@ class SendingResource(BaseResource):
 
 
 class AsyncSendingResource(AsyncBaseResource):
-    async def transactional(
+    async def send_transactional(
         self,
         *,
         from_: MailAddressParam,
@@ -213,7 +211,7 @@ class AsyncSendingResource(AsyncBaseResource):
         data = await self._http.post("/send/transactional", json=body, headers=headers)
         return SendMessageAcceptedResponse.model_validate(data)
 
-    async def transactional_batch(
+    async def send_transactional_batch(
         self,
         *,
         requests: Sequence[SendMessageRequestParam],
@@ -232,7 +230,7 @@ class AsyncSendingResource(AsyncBaseResource):
         data = await self._http.post("/send/transactional/batch", json=body, headers=headers)
         return SendMessageBatchResponse.model_validate(data)
 
-    async def broadcast(
+    async def send_broadcast(
         self,
         *,
         from_: MailAddressParam,
@@ -247,8 +245,6 @@ class AsyncSendingResource(AsyncBaseResource):
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendBroadcastResponse:
-        """Send a broadcast email"""
-
         body = build_body(
             from_=from_,
             template=template,
@@ -267,7 +263,7 @@ class AsyncSendingResource(AsyncBaseResource):
         data = await self._http.post("/send/broadcast", json=body, headers=headers)
         return SendBroadcastResponse.model_validate(data)
 
-    async def broadcast_message(
+    async def send_broadcast_message(
         self,
         *,
         from_: MailAddressParam,
