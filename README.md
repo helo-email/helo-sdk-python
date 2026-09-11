@@ -116,6 +116,67 @@ except helo.APIError as exc:
 Network failures raise `APIConnectionError` (or `APITimeoutError`) once retries are exhausted.
 Both subclass `HeloError`, the base of every exception this library raises.
 
+## Webhook signature verification
+
+Webhook deliveries are signed with the endpoint's signing key. Verify every delivery before
+acting on it, against the **raw** request body — parsing and re-serializing the JSON changes
+the bytes and the signature will not match.
+
+```python
+import json
+import os
+
+from flask import Flask, abort, request
+
+import sdk_helo_email as helo
+
+app = Flask(__name__)
+
+
+@app.post("/webhooks/helo")
+def receive_webhook() -> tuple[str, int]:
+    try:
+        helo.verify_webhook_signature(
+            request.headers.get("X-Helo-Webhook-Signature"),
+            request.get_data(),  # raw body, exactly as received
+            os.environ["HELO_WEBHOOK_SIGNING_KEY"],
+        )
+    except helo.WebhookSignatureError:
+        abort(400)
+
+    event = json.loads(request.get_data())
+    # ... handle the event, then acknowledge quickly
+    return "", 204
+```
+
+`verify_webhook_signature` returns `None` when the signature is valid and raises otherwise.
+Each rejection has its own class, so a stale delivery can be treated differently from a
+genuinely bad one:
+
+| Exception | Meaning |
+| --- | --- |
+| `WebhookSignatureMalformedHeaderError` | The header was not in the expected format |
+| `WebhookSignatureUnsupportedVersionError` | The delivery used a signing scheme this SDK version cannot verify — upgrade the package |
+| `WebhookSignatureTimestampSkewError` | Correctly signed, but too old to accept — possible replay, or clock drift |
+| `WebhookSignatureMismatchError` | Wrong signing key, or the body was modified in transit |
+
+All four inherit from `WebhookSignatureError` (itself a `HeloError`), so catch that
+one class to handle any rejection. If you only want a boolean, use
+`is_valid_webhook_signature` instead:
+
+```python
+if helo.is_valid_webhook_signature(signature_header, raw_body, signing_key):
+    ...
+```
+
+The body may be passed as `str` or `bytes`. The signature header may carry several versions at
+once (`t=...,v1=...,v2=...`) while a new signing scheme is being rolled out. This SDK verifies
+against the newest version it supports (`SUPPORTED_WEBHOOK_SIGNATURE_VERSIONS`) and ignores
+elements it does not recognize, so a rollout will not break this integration.
+
+To compute a signature yourself — signing a fixture in tests, for example — use
+`generate_webhook_signature(payload, signing_key, timestamp)`.
+
 ## Development
 
 ```bash

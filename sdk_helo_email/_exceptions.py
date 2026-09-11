@@ -76,3 +76,32 @@ class RateLimitError(APIError):
 
 class InternalServerError(APIError):
     pass
+
+
+class WebhookSignatureError(HeloError):
+    """Base class for every reason a webhook signature is rejected.
+
+    Catch this one class when you do not care why a delivery was rejected.
+    """
+
+
+class WebhookSignatureMalformedHeaderError(WebhookSignatureError):
+    """The header was not in the documented ``t={timestamp},v{version}={signature}`` form."""
+
+
+class WebhookSignatureUnsupportedVersionError(WebhookSignatureError):
+    """The header carried only signing schemes this SDK does not know how to verify.
+
+    Upgrading the SDK is the fix; see ``SUPPORTED_WEBHOOK_SIGNATURE_VERSIONS``.
+    """
+
+
+class WebhookSignatureTimestampSkewError(WebhookSignatureError):
+    """The signature was correctly formed but its timestamp is too far from the current time.
+
+    It may be a replay.
+    """
+
+
+class WebhookSignatureMismatchError(WebhookSignatureError):
+    """The signature did not match the body: it was tampered with, or the signing key is wrong."""

@@ -35,6 +35,9 @@ make build              # build a wheel and sdist
 - `types/shared.py` — the `HeloModel` pydantic base plus every enum. `types/<tag>.py` holds
   the response models a single tag owns; models two or more tags reach live in `shared`.
 - `types/params.py` — TypedDicts for the object-shaped values request bodies accept.
+- `_webhooks.py` — HMAC-SHA256 verification of the `X-Helo-Webhook-Signature` header
+  (`verify_webhook_signature`, `is_valid_webhook_signature`, `generate_webhook_signature`); the
+  `WebhookSignature*Error` classes in `_exceptions.py` say why a delivery was rejected.
 
 Request bodies are flattened into keyword arguments, so callers write
 `client.sending.transactional(from_=..., to=[...])` rather than assembling a dict. `_utils.py`

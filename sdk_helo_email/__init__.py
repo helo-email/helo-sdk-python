@@ -12,8 +12,20 @@ from ._exceptions import (
     PermissionDeniedError,
     RateLimitError,
     UnprocessableEntityError,
+    WebhookSignatureError,
+    WebhookSignatureMalformedHeaderError,
+    WebhookSignatureMismatchError,
+    WebhookSignatureTimestampSkewError,
+    WebhookSignatureUnsupportedVersionError,
 )
 from ._version import __version__
+from ._webhooks import (
+    MAX_WEBHOOK_TIMESTAMP_SKEW_SECONDS,
+    SUPPORTED_WEBHOOK_SIGNATURE_VERSIONS,
+    generate_webhook_signature,
+    is_valid_webhook_signature,
+    verify_webhook_signature,
+)
 from .types import (
     ActivityEvent,
     ActivityMailAddress,
@@ -153,6 +165,16 @@ __all__ = [
     "PermissionDeniedError",
     "RateLimitError",
     "UnprocessableEntityError",
+    "WebhookSignatureError",
+    "WebhookSignatureMalformedHeaderError",
+    "WebhookSignatureMismatchError",
+    "WebhookSignatureTimestampSkewError",
+    "WebhookSignatureUnsupportedVersionError",
+    "MAX_WEBHOOK_TIMESTAMP_SKEW_SECONDS",
+    "SUPPORTED_WEBHOOK_SIGNATURE_VERSIONS",
+    "generate_webhook_signature",
+    "is_valid_webhook_signature",
+    "verify_webhook_signature",
     "ActivityEvent",
     "ActivityMailAddress",
     "Attachment",
