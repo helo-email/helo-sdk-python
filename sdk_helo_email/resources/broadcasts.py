@@ -18,6 +18,8 @@ class BroadcastsResource(BaseResource):
         channel_id: str,
         status: BroadcastStatus | None = None,
         subject: str | None = None,
+        from_: str | None = None,
+        to: str | None = None,
         limit: int | None = None,
         offset: int | None = None,
     ) -> PaginatedResponseOfBroadcast:
@@ -27,6 +29,8 @@ class BroadcastsResource(BaseResource):
             channel_id=channel_id,
             status=status.value if status else None,
             subject=subject,
+            from_=from_,
+            to=to,
             limit=limit,
             offset=offset,
         )
@@ -71,6 +75,8 @@ class AsyncBroadcastsResource(AsyncBaseResource):
         channel_id: str,
         status: BroadcastStatus | None = None,
         subject: str | None = None,
+        from_: str | None = None,
+        to: str | None = None,
         limit: int | None = None,
         offset: int | None = None,
     ) -> PaginatedResponseOfBroadcast:
@@ -80,6 +86,8 @@ class AsyncBroadcastsResource(AsyncBaseResource):
             channel_id=channel_id,
             status=status.value if status else None,
             subject=subject,
+            from_=from_,
+            to=to,
             limit=limit,
             offset=offset,
         )
