@@ -1,0 +1,56 @@
+name: Publish
+
+# Publishes to PyPI when a version tag (e.g. 1.0.1, 1.0.1b1) is pushed, once
+# the same checks that gate pull requests pass.
+# release.yml also dispatches it against the tag it creates, since tags pushed
+# with GITHUB_TOKEN don't trigger `push` workflows.
+on:
+  push:
+    tags: ["[0-9]+.[0-9]+.[0-9]+*"]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-${{ github.ref_name }}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    if: github.ref_type == 'tag'
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write # PyPI trusted publishing
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install build tools
+        run: python -m pip install build packaging
+
+      # Compared as PEP 440 versions, so a 1.0.1-beta.1 tag matches a 1.0.1b1 package.
+      - name: Check tag matches package version
+        run: |
+          python - <<'EOF'
+          import os, runpy
+          from packaging.version import Version
+
+          tag = os.environ["GITHUB_REF_NAME"]
+          version = runpy.run_path("sdk_helo_email/_version.py")["__version__"]
+          if Version(tag) != Version(version):
+              raise SystemExit(f"Tag {tag} does not match package version {version}")
+          EOF
+
+      - name: Build
+        run: python -m build
+
+      - uses: pypa/gh-action-pypi-publish@release/v1

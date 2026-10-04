@@ -22,6 +22,7 @@ make install            # pip install -e ".[dev]"
 make check              # ruff check . && mypy sdk_helo_email
 make test               # pytest (mocked HTTP, no server needed)
 make build              # build a wheel and sdist
+git tag <version> && git push origin <version>  # run CI, then publish to PyPI (.github/workflows/publish.yml)
 ```
 
 ## Architecture
