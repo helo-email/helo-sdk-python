@@ -35,6 +35,7 @@ class MailAddressParam(TypedDict):
 
 
 class SendMessageRequestTemplateParam(TypedDict, total=False):
+    id: str
     subject: str
     html: str
     text: str
@@ -78,12 +79,13 @@ SendMessageRequestParam = TypedDict(
 )
 
 
-class SendBroadcastRequestTemplateParam(TypedDict):
+class SendBroadcastRequestTemplateParam(TypedDict, total=False):
+    id: str
     subject: str
-    html: NotRequired[str]
-    text: NotRequired[str]
-    inlineStyles: NotRequired[bool]
-    data: NotRequired[dict[str, Any]]
+    html: str
+    text: str
+    inlineStyles: bool
+    data: dict[str, Any]
 
 
 class SendBroadcastRequestTrackingParam(TypedDict, total=False):

@@ -101,6 +101,8 @@ class SendingResource(BaseResource):
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendBroadcastResponse:
+        """Send a broadcast"""
+
         body = build_body(
             from_=from_,
             template=template,
@@ -245,6 +247,8 @@ class AsyncSendingResource(AsyncBaseResource):
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendBroadcastResponse:
+        """Send a broadcast"""
+
         body = build_body(
             from_=from_,
             template=template,

@@ -16,11 +16,12 @@ class Attachment(HeloModel):
 
 
 class SendBroadcastRequestTemplate(HeloModel):
-    """Email template applied to every message in the broadcast. At least one of `html` or `text`
-    is required.
+    """Email template applied to every message in the broadcast. Either reference a stored
+    template by `id`, or supply `subject` and at least one of `html` or `text` inline.
     """
 
-    subject: str
+    id: str | None = None
+    subject: str | None = None
     html: str | None = None
     text: str | None = None
     inline_styles: bool | None = None
@@ -62,6 +63,11 @@ class SendBroadcastResponse(HeloModel):
 
 
 class SendMessageRequestTemplate(HeloModel):
+    """Either reference a stored template by `id`, or supply `subject` and at least one of `html`
+    or `text` inline.
+    """
+
+    id: str | None = None
     subject: str | None = None
     html: str | None = None
     text: str | None = None

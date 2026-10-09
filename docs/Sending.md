@@ -6,7 +6,7 @@ Send transactional and broadcast emails.
 | ------ | ------------ | ----------- |
 | [**sending.send_transactional**](#send_transactional) | **POST** /send/transactional | Send a transactional email |
 | [**sending.send_transactional_batch**](#send_transactional_batch) | **POST** /send/transactional/batch | Send transactional emails in batch |
-| [**sending.send_broadcast**](#send_broadcast) | **POST** /send/broadcast |  |
+| [**sending.send_broadcast**](#send_broadcast) | **POST** /send/broadcast | Send a broadcast |
 | [**sending.send_broadcast_message**](#send_broadcast_message) | **POST** /send/broadcast/message | Send a single broadcast email |
 
 ## send_transactional
@@ -30,6 +30,7 @@ send_message_accepted = client.sending.send_transactional(
     html="<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
     text="This is a test message, delivered with <3 by Helo.",
     template={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
         "subject": "test-subject",
         "html": "test-html",
         "text": "test-text",
@@ -82,6 +83,8 @@ send_message_batch = client.sending.send_transactional_batch(
 
 `POST /send/broadcast`
 
+Sends a broadcast of multiple messages for marketing or announcement purposes.
+
 ```python Sending_sendBroadcast
 import sdk_helo_email as helo
 
@@ -90,6 +93,7 @@ client = helo.Helo()  # reads HELO_API_KEY from the environment
 send_broadcast = client.sending.send_broadcast(
     from_={"email": "test@example.com", "name": "test-name"},
     template={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
         "subject": "test-subject",
         "html": "test-html",
         "text": "test-text",
@@ -139,6 +143,7 @@ send_message_accepted = client.sending.send_broadcast_message(
     html="<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
     text="This is a test message, delivered with <3 by Helo.",
     template={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
         "subject": "test-subject",
         "html": "test-html",
         "text": "test-text",
