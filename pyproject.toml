@@ -52,6 +52,9 @@ line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
+# Enums stay `(str, Enum)` rather than the StrEnum ruff suggests from py311: StrEnum changes what str()
+# and format() return for a member, which would break callers relying on them.
+ignore = ["UP042"]
 
 # Generated tests embed the documentation samples verbatim, and a sample value
 # such as an HTML body is one unbreakable string literal.

@@ -4,6 +4,7 @@
 
 - Dropped support for Python 3.10, which reached end of life in October 2026; the SDK now requires
   Python 3.11 or later. pip won't install this version on 3.10, which keeps the previous one.
+- Added Python 3.14 to the versions the SDK is tested on.
 
 ## 1.1.0
 
