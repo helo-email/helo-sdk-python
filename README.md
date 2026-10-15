@@ -8,7 +8,7 @@ Helo Email API (https://helohq.com)
 pip install sdk_helo_email
 ```
 
-Requires Python 3.10+ and installs `httpx` and `pydantic` automatically.
+Requires Python 3.11+ and installs `httpx` and `pydantic` automatically.
 
 ## Quick start
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0
+
+- Dropped support for Python 3.10, which reached end of life in October 2026; the SDK now requires
+  Python 3.11 or later. pip won't install this version on 3.10, which keeps the previous one.
+
 ## 1.1.0
 
 - Added `id` to the `template` of transactional and broadcast send requests, to send a stored template
