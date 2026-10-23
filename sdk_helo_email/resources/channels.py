@@ -10,15 +10,7 @@ from ._base import AsyncBaseResource, BaseResource
 
 
 class ChannelsResource(BaseResource):
-    def list(
-        self,
-        *,
-        limit: int | None = None,
-        offset: int | None = None,
-        name: str | None = None,
-        channel_ids: Sequence[str] | None = None,
-        delivery_type: DeliveryType | None = None,
-    ) -> PaginationResultOfChannelBasicResponse:
+    def list(self, *, limit: int | None = None, offset: int | None = None, name: str | None = None, channel_ids: Sequence[str] | None = None, delivery_type: DeliveryType | None = None) -> PaginationResultOfChannelBasicResponse:
         """List all channels"""
 
         params = build_params(
@@ -31,13 +23,7 @@ class ChannelsResource(BaseResource):
         data = self._http.get("/channels", params=params)
         return PaginationResultOfChannelBasicResponse.model_validate(data)
 
-    def create(
-        self,
-        *,
-        name: str,
-        delivery_type: DeliveryType,
-        tracking: CreateChannelTrackingParam | None = None,
-    ) -> ChannelDetailsResponse:
+    def create(self, *, name: str, delivery_type: DeliveryType, tracking: CreateChannelTrackingParam | None = None) -> ChannelDetailsResponse:
         """Create a channel"""
 
         body = build_body(
@@ -54,14 +40,7 @@ class ChannelsResource(BaseResource):
         data = self._http.get(f"/channels/{id}")
         return ChannelDetailsResponse.model_validate(data)
 
-    def update(
-        self,
-        id: str,
-        *,
-        name: str | None = None,
-        delivery_type: DeliveryType | None = None,
-        tracking: UpdateChannelTrackingParam | None = None,
-    ) -> ChannelDetailsResponse:
+    def update(self, id: str, *, name: str | None = None, delivery_type: DeliveryType | None = None, tracking: UpdateChannelTrackingParam | None = None) -> ChannelDetailsResponse:
         """Update a channel"""
 
         body = build_body(
@@ -79,15 +58,7 @@ class ChannelsResource(BaseResource):
 
 
 class AsyncChannelsResource(AsyncBaseResource):
-    async def list(
-        self,
-        *,
-        limit: int | None = None,
-        offset: int | None = None,
-        name: str | None = None,
-        channel_ids: Sequence[str] | None = None,
-        delivery_type: DeliveryType | None = None,
-    ) -> PaginationResultOfChannelBasicResponse:
+    async def list(self, *, limit: int | None = None, offset: int | None = None, name: str | None = None, channel_ids: Sequence[str] | None = None, delivery_type: DeliveryType | None = None) -> PaginationResultOfChannelBasicResponse:
         """List all channels"""
 
         params = build_params(
@@ -100,13 +71,7 @@ class AsyncChannelsResource(AsyncBaseResource):
         data = await self._http.get("/channels", params=params)
         return PaginationResultOfChannelBasicResponse.model_validate(data)
 
-    async def create(
-        self,
-        *,
-        name: str,
-        delivery_type: DeliveryType,
-        tracking: CreateChannelTrackingParam | None = None,
-    ) -> ChannelDetailsResponse:
+    async def create(self, *, name: str, delivery_type: DeliveryType, tracking: CreateChannelTrackingParam | None = None) -> ChannelDetailsResponse:
         """Create a channel"""
 
         body = build_body(
@@ -123,14 +88,7 @@ class AsyncChannelsResource(AsyncBaseResource):
         data = await self._http.get(f"/channels/{id}")
         return ChannelDetailsResponse.model_validate(data)
 
-    async def update(
-        self,
-        id: str,
-        *,
-        name: str | None = None,
-        delivery_type: DeliveryType | None = None,
-        tracking: UpdateChannelTrackingParam | None = None,
-    ) -> ChannelDetailsResponse:
+    async def update(self, id: str, *, name: str | None = None, delivery_type: DeliveryType | None = None, tracking: UpdateChannelTrackingParam | None = None) -> ChannelDetailsResponse:
         """Update a channel"""
 
         body = build_body(

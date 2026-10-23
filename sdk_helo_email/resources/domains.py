@@ -3,25 +3,12 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from .._utils import build_body, build_params
-from ..types.domains import (
-    DnsRecordResponse,
-    DnsRecordsResponse,
-    DomainResponse,
-    DomainWithDnsResponse,
-    PaginatedResponseOfDomainResponse,
-)
+from ..types.domains import DnsRecordResponse, DnsRecordsResponse, DomainResponse, DomainWithDnsResponse, PaginatedResponseOfDomainResponse
 from ._base import AsyncBaseResource, BaseResource
 
 
 class DomainsResource(BaseResource):
-    def list(
-        self,
-        *,
-        limit: int | None = None,
-        offset: int | None = None,
-        name: str | None = None,
-        channel_ids: Sequence[str] | None = None,
-    ) -> PaginatedResponseOfDomainResponse:
+    def list(self, *, limit: int | None = None, offset: int | None = None, name: str | None = None, channel_ids: Sequence[str] | None = None) -> PaginatedResponseOfDomainResponse:
         """List all domains"""
 
         params = build_params(
@@ -33,14 +20,13 @@ class DomainsResource(BaseResource):
         data = self._http.get("/domains", params=params)
         return PaginatedResponseOfDomainResponse.model_validate(data)
 
-    def create(
-        self, *, name: str, channel_ids: Sequence[str] | None = None
-    ) -> DomainWithDnsResponse:
+    def create(self, *, name: str, channel_ids: Sequence[str] | None = None, enable_custom_tracking: bool | None = None) -> DomainWithDnsResponse:
         """Create a domain"""
 
         body = build_body(
             name=name,
             channel_ids=channel_ids if channel_ids else None,
+            enable_custom_tracking=enable_custom_tracking,
         )
         data = self._http.post("/domains", json=body)
         return DomainWithDnsResponse.model_validate(data)
@@ -51,11 +37,12 @@ class DomainsResource(BaseResource):
         data = self._http.get(f"/domains/{id}")
         return DomainWithDnsResponse.model_validate(data)
 
-    def update(self, id: str, *, channel_ids: Sequence[str] | None = None) -> DomainResponse:
+    def update(self, id: str, *, channel_ids: Sequence[str] | None = None, enable_custom_tracking: bool | None = None) -> DomainResponse:
         """Update a domain"""
 
         body = build_body(
             channel_ids=channel_ids if channel_ids else None,
+            enable_custom_tracking=enable_custom_tracking,
         )
         data = self._http.patch(f"/domains/{id}", json=body)
         return DomainResponse.model_validate(data)
@@ -79,14 +66,7 @@ class DomainsResource(BaseResource):
 
 
 class AsyncDomainsResource(AsyncBaseResource):
-    async def list(
-        self,
-        *,
-        limit: int | None = None,
-        offset: int | None = None,
-        name: str | None = None,
-        channel_ids: Sequence[str] | None = None,
-    ) -> PaginatedResponseOfDomainResponse:
+    async def list(self, *, limit: int | None = None, offset: int | None = None, name: str | None = None, channel_ids: Sequence[str] | None = None) -> PaginatedResponseOfDomainResponse:
         """List all domains"""
 
         params = build_params(
@@ -98,14 +78,13 @@ class AsyncDomainsResource(AsyncBaseResource):
         data = await self._http.get("/domains", params=params)
         return PaginatedResponseOfDomainResponse.model_validate(data)
 
-    async def create(
-        self, *, name: str, channel_ids: Sequence[str] | None = None
-    ) -> DomainWithDnsResponse:
+    async def create(self, *, name: str, channel_ids: Sequence[str] | None = None, enable_custom_tracking: bool | None = None) -> DomainWithDnsResponse:
         """Create a domain"""
 
         body = build_body(
             name=name,
             channel_ids=channel_ids if channel_ids else None,
+            enable_custom_tracking=enable_custom_tracking,
         )
         data = await self._http.post("/domains", json=body)
         return DomainWithDnsResponse.model_validate(data)
@@ -116,11 +95,12 @@ class AsyncDomainsResource(AsyncBaseResource):
         data = await self._http.get(f"/domains/{id}")
         return DomainWithDnsResponse.model_validate(data)
 
-    async def update(self, id: str, *, channel_ids: Sequence[str] | None = None) -> DomainResponse:
+    async def update(self, id: str, *, channel_ids: Sequence[str] | None = None, enable_custom_tracking: bool | None = None) -> DomainResponse:
         """Update a domain"""
 
         body = build_body(
             channel_ids=channel_ids if channel_ids else None,
+            enable_custom_tracking=enable_custom_tracking,
         )
         data = await self._http.patch(f"/domains/{id}", json=body)
         return DomainResponse.model_validate(data)

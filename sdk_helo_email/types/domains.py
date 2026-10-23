@@ -10,6 +10,7 @@ from .shared import DeliveryType, DnsRecordStatus, DnsRecordType, HeloModel
 class CreateDomainRequest(HeloModel):
     name: str
     channel_ids: list[str] | None = None
+    enable_custom_tracking: bool | None = None
 
 
 class DnsRecordResponse(HeloModel):
@@ -24,6 +25,7 @@ class DnsRecordsResponse(HeloModel):
     domain_key_active: DnsRecordResponse | None = None
     domain_key_pending: DnsRecordResponse | None = None
     return_path: list[DnsRecordResponse] | None = None
+    tracking: DnsRecordResponse | None = None
 
 
 class DomainChannelResponse(HeloModel):
@@ -57,3 +59,4 @@ class PaginatedResponseOfDomainResponse(HeloModel):
 
 class UpdateDomainRequest(HeloModel):
     channel_ids: list[str] | None = None
+    enable_custom_tracking: bool | None = None

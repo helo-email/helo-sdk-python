@@ -40,6 +40,7 @@ client = helo.Helo()  # reads HELO_API_KEY from the environment
 domain_with_dns = client.domains.create(
     name="test-name",
     channel_ids=["550e8400-e29b-41d4-a716-446655440000"],
+    enable_custom_tracking=True,
 )
 ```
 
@@ -71,6 +72,7 @@ client = helo.Helo()  # reads HELO_API_KEY from the environment
 domain = client.domains.update(
     "550e8400-e29b-41d4-a716-446655440000",
     channel_ids=["550e8400-e29b-41d4-a716-446655440000"],
+    enable_custom_tracking=True,
 )
 ```
 

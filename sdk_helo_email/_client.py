@@ -11,7 +11,6 @@ from ._http import (
     HttpClient,
 )
 from .resources import (
-    ActivityResource,
     AsyncActivityResource,
     AsyncBroadcastsResource,
     AsyncChannelsResource,
@@ -19,13 +18,16 @@ from .resources import (
     AsyncSendingResource,
     AsyncStatisticsResource,
     AsyncSuppressionsResource,
+    AsyncTemplatesResource,
     AsyncWebhooksResource,
+    ActivityResource,
     BroadcastsResource,
     ChannelsResource,
     DomainsResource,
     SendingResource,
     StatisticsResource,
     SuppressionsResource,
+    TemplatesResource,
     WebhooksResource,
 )
 
@@ -34,7 +36,8 @@ def _resolve_api_key(api_key: str | None) -> str:
     resolved = api_key or os.environ.get("HELO_API_KEY")
     if not resolved:
         raise ValueError(
-            "No API key provided. Pass api_key= or set the HELO_API_KEY environment variable."
+            "No API key provided. Pass api_key= or set the HELO_API_KEY "
+            "environment variable."
         )
     return resolved
 
@@ -49,6 +52,7 @@ class Helo:
     sending: SendingResource
     statistics: StatisticsResource
     suppressions: SuppressionsResource
+    templates: TemplatesResource
     webhooks: WebhooksResource
 
     def __init__(
@@ -72,6 +76,7 @@ class Helo:
         self.sending = SendingResource(self._http)
         self.statistics = StatisticsResource(self._http)
         self.suppressions = SuppressionsResource(self._http)
+        self.templates = TemplatesResource(self._http)
         self.webhooks = WebhooksResource(self._http)
 
     def close(self) -> None:
@@ -94,6 +99,7 @@ class AsyncHelo:
     sending: AsyncSendingResource
     statistics: AsyncStatisticsResource
     suppressions: AsyncSuppressionsResource
+    templates: AsyncTemplatesResource
     webhooks: AsyncWebhooksResource
 
     def __init__(
@@ -117,6 +123,7 @@ class AsyncHelo:
         self.sending = AsyncSendingResource(self._http)
         self.statistics = AsyncStatisticsResource(self._http)
         self.suppressions = AsyncSuppressionsResource(self._http)
+        self.templates = AsyncTemplatesResource(self._http)
         self.webhooks = AsyncWebhooksResource(self._http)
 
     async def close(self) -> None:

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+
+- Added sending template management
+- Added support for custom tracking domains
+
 ## 1.2.0
 
 - Dropped support for Python 3.10, which reached end of life in October 2026; the SDK now requires

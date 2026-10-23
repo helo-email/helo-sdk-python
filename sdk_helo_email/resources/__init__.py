@@ -1,10 +1,11 @@
-from .activity import ActivityResource, AsyncActivityResource
+from .activity import AsyncActivityResource, ActivityResource
 from .broadcasts import AsyncBroadcastsResource, BroadcastsResource
 from .channels import AsyncChannelsResource, ChannelsResource
 from .domains import AsyncDomainsResource, DomainsResource
 from .sending import AsyncSendingResource, SendingResource
 from .statistics import AsyncStatisticsResource, StatisticsResource
 from .suppressions import AsyncSuppressionsResource, SuppressionsResource
+from .templates import AsyncTemplatesResource, TemplatesResource
 from .webhooks import AsyncWebhooksResource, WebhooksResource
 
 __all__ = [
@@ -22,6 +23,8 @@ __all__ = [
     "AsyncStatisticsResource",
     "SuppressionsResource",
     "AsyncSuppressionsResource",
+    "TemplatesResource",
+    "AsyncTemplatesResource",
     "WebhooksResource",
     "AsyncWebhooksResource",
 ]

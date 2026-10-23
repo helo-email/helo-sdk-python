@@ -10,13 +10,7 @@ from ._base import AsyncBaseResource, BaseResource
 
 
 class WebhooksResource(BaseResource):
-    def list(
-        self,
-        *,
-        limit: int | None = None,
-        offset: int | None = None,
-        channel_ids: Sequence[str] | None = None,
-    ) -> PaginationResultOfWebhookResponse:
+    def list(self, *, limit: int | None = None, offset: int | None = None, channel_ids: Sequence[str] | None = None) -> PaginationResultOfWebhookResponse:
         """List all webhooks"""
 
         params = build_params(
@@ -27,24 +21,14 @@ class WebhooksResource(BaseResource):
         data = self._http.get("/webhooks", params=params)
         return PaginationResultOfWebhookResponse.model_validate(data)
 
-    def create(
-        self,
-        *,
-        url: str,
-        events: Sequence[WebhookEvent],
-        channel_id: str | None = None,
-        additional_headers: Sequence[WebhookHeaderParam] | None = None,
-        enabled: bool | None = None,
-    ) -> WebhookResponse:
+    def create(self, *, url: str, events: Sequence[WebhookEvent], channel_id: str | None = None, additional_headers: Sequence[WebhookHeaderParam] | None = None, enabled: bool | None = None) -> WebhookResponse:
         """Create a webhook"""
 
         body = build_body(
             url=url,
             events=[item.value for item in events] if events else None,
             channel_id=channel_id,
-            additional_headers=[str(item) for item in additional_headers]
-            if additional_headers
-            else None,
+            additional_headers=[str(item) for item in additional_headers] if additional_headers else None,
             enabled=enabled,
         )
         data = self._http.post("/webhooks", json=body)
@@ -56,25 +40,14 @@ class WebhooksResource(BaseResource):
         data = self._http.get(f"/webhooks/{id}")
         return WebhookResponse.model_validate(data)
 
-    def update(
-        self,
-        id: str,
-        *,
-        url: str | None = None,
-        events: Sequence[WebhookEvent] | None = None,
-        channel_id: str | None = None,
-        additional_headers: Sequence[WebhookHeaderParam] | None = None,
-        enabled: bool | None = None,
-    ) -> WebhookResponse:
+    def update(self, id: str, *, url: str | None = None, events: Sequence[WebhookEvent] | None = None, channel_id: str | None = None, additional_headers: Sequence[WebhookHeaderParam] | None = None, enabled: bool | None = None) -> WebhookResponse:
         """Update a webhook"""
 
         body = build_body(
             url=url,
             events=[item.value for item in events] if events else None,
             channel_id=channel_id,
-            additional_headers=[str(item) for item in additional_headers]
-            if additional_headers
-            else None,
+            additional_headers=[str(item) for item in additional_headers] if additional_headers else None,
             enabled=enabled,
         )
         data = self._http.patch(f"/webhooks/{id}", json=body)
@@ -93,13 +66,7 @@ class WebhooksResource(BaseResource):
 
 
 class AsyncWebhooksResource(AsyncBaseResource):
-    async def list(
-        self,
-        *,
-        limit: int | None = None,
-        offset: int | None = None,
-        channel_ids: Sequence[str] | None = None,
-    ) -> PaginationResultOfWebhookResponse:
+    async def list(self, *, limit: int | None = None, offset: int | None = None, channel_ids: Sequence[str] | None = None) -> PaginationResultOfWebhookResponse:
         """List all webhooks"""
 
         params = build_params(
@@ -110,24 +77,14 @@ class AsyncWebhooksResource(AsyncBaseResource):
         data = await self._http.get("/webhooks", params=params)
         return PaginationResultOfWebhookResponse.model_validate(data)
 
-    async def create(
-        self,
-        *,
-        url: str,
-        events: Sequence[WebhookEvent],
-        channel_id: str | None = None,
-        additional_headers: Sequence[WebhookHeaderParam] | None = None,
-        enabled: bool | None = None,
-    ) -> WebhookResponse:
+    async def create(self, *, url: str, events: Sequence[WebhookEvent], channel_id: str | None = None, additional_headers: Sequence[WebhookHeaderParam] | None = None, enabled: bool | None = None) -> WebhookResponse:
         """Create a webhook"""
 
         body = build_body(
             url=url,
             events=[item.value for item in events] if events else None,
             channel_id=channel_id,
-            additional_headers=[str(item) for item in additional_headers]
-            if additional_headers
-            else None,
+            additional_headers=[str(item) for item in additional_headers] if additional_headers else None,
             enabled=enabled,
         )
         data = await self._http.post("/webhooks", json=body)
@@ -139,25 +96,14 @@ class AsyncWebhooksResource(AsyncBaseResource):
         data = await self._http.get(f"/webhooks/{id}")
         return WebhookResponse.model_validate(data)
 
-    async def update(
-        self,
-        id: str,
-        *,
-        url: str | None = None,
-        events: Sequence[WebhookEvent] | None = None,
-        channel_id: str | None = None,
-        additional_headers: Sequence[WebhookHeaderParam] | None = None,
-        enabled: bool | None = None,
-    ) -> WebhookResponse:
+    async def update(self, id: str, *, url: str | None = None, events: Sequence[WebhookEvent] | None = None, channel_id: str | None = None, additional_headers: Sequence[WebhookHeaderParam] | None = None, enabled: bool | None = None) -> WebhookResponse:
         """Update a webhook"""
 
         body = build_body(
             url=url,
             events=[item.value for item in events] if events else None,
             channel_id=channel_id,
-            additional_headers=[str(item) for item in additional_headers]
-            if additional_headers
-            else None,
+            additional_headers=[str(item) for item in additional_headers] if additional_headers else None,
             enabled=enabled,
         )
         data = await self._http.patch(f"/webhooks/{id}", json=body)

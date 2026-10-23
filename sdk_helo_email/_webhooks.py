@@ -133,9 +133,7 @@ def _parse_header(signature_header: str | None) -> tuple[str, dict[int, list[str
 
         # Only versions this SDK verifies have a signature format it can insist
         # on; anything else is recorded but left unchecked.
-        if version in SUPPORTED_WEBHOOK_SIGNATURE_VERSIONS and not _HEX_SIGNATURE_REGEX.match(
-            value
-        ):
+        if version in SUPPORTED_WEBHOOK_SIGNATURE_VERSIONS and not _HEX_SIGNATURE_REGEX.match(value):
             raise WebhookSignatureMalformedHeaderError("Malformed webhook signature header")
 
         signatures.setdefault(version, []).append(value)

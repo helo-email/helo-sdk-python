@@ -63,7 +63,9 @@ def test_rejects_a_signature_from_a_different_key() -> None:
 
 def test_rejects_a_tampered_body() -> None:
     with pytest.raises(helo.WebhookSignatureMismatchError):
-        helo.verify_webhook_signature(valid_header(), '{"event":"message.bounced"}', SIGNING_KEY)
+        helo.verify_webhook_signature(
+            valid_header(), '{"event":"message.bounced"}', SIGNING_KEY
+        )
 
 
 def test_rejects_a_stale_timestamp() -> None:

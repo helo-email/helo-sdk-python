@@ -1,28 +1,14 @@
 from __future__ import annotations
 
+
 from .._utils import build_params
-from ..types.broadcasts import (
-    BroadcastDetailsResponse,
-    PaginatedResponseOfBroadcast,
-    PaginatedResponseOfBroadcastFailure,
-    PaginatedResponseOfBroadcastSuppression,
-)
+from ..types.broadcasts import BroadcastDetailsResponse, PaginatedResponseOfBroadcast, PaginatedResponseOfBroadcastFailure, PaginatedResponseOfBroadcastSuppression
 from ..types.shared import BroadcastStatus
 from ._base import AsyncBaseResource, BaseResource
 
 
 class BroadcastsResource(BaseResource):
-    def list(
-        self,
-        *,
-        channel_id: str,
-        status: BroadcastStatus | None = None,
-        subject: str | None = None,
-        from_: str | None = None,
-        to: str | None = None,
-        limit: int | None = None,
-        offset: int | None = None,
-    ) -> PaginatedResponseOfBroadcast:
+    def list(self, *, channel_id: str, status: BroadcastStatus | None = None, subject: str | None = None, from_: str | None = None, to: str | None = None, limit: int | None = None, offset: int | None = None) -> PaginatedResponseOfBroadcast:
         """List broadcasts"""
 
         params = build_params(
@@ -43,9 +29,7 @@ class BroadcastsResource(BaseResource):
         data = self._http.get(f"/broadcasts/{id}")
         return BroadcastDetailsResponse.model_validate(data)
 
-    def list_failures(
-        self, id: str, *, limit: int | None = None, offset: int | None = None
-    ) -> PaginatedResponseOfBroadcastFailure:
+    def list_failures(self, id: str, *, limit: int | None = None, offset: int | None = None) -> PaginatedResponseOfBroadcastFailure:
         """List failed broadcast messages"""
 
         params = build_params(
@@ -55,9 +39,7 @@ class BroadcastsResource(BaseResource):
         data = self._http.get(f"/broadcasts/{id}/failures", params=params)
         return PaginatedResponseOfBroadcastFailure.model_validate(data)
 
-    def list_suppressions(
-        self, id: str, *, limit: int | None = None, offset: int | None = None
-    ) -> PaginatedResponseOfBroadcastSuppression:
+    def list_suppressions(self, id: str, *, limit: int | None = None, offset: int | None = None) -> PaginatedResponseOfBroadcastSuppression:
         """List broadcast suppressed recipients"""
 
         params = build_params(
@@ -69,17 +51,7 @@ class BroadcastsResource(BaseResource):
 
 
 class AsyncBroadcastsResource(AsyncBaseResource):
-    async def list(
-        self,
-        *,
-        channel_id: str,
-        status: BroadcastStatus | None = None,
-        subject: str | None = None,
-        from_: str | None = None,
-        to: str | None = None,
-        limit: int | None = None,
-        offset: int | None = None,
-    ) -> PaginatedResponseOfBroadcast:
+    async def list(self, *, channel_id: str, status: BroadcastStatus | None = None, subject: str | None = None, from_: str | None = None, to: str | None = None, limit: int | None = None, offset: int | None = None) -> PaginatedResponseOfBroadcast:
         """List broadcasts"""
 
         params = build_params(
@@ -100,9 +72,7 @@ class AsyncBroadcastsResource(AsyncBaseResource):
         data = await self._http.get(f"/broadcasts/{id}")
         return BroadcastDetailsResponse.model_validate(data)
 
-    async def list_failures(
-        self, id: str, *, limit: int | None = None, offset: int | None = None
-    ) -> PaginatedResponseOfBroadcastFailure:
+    async def list_failures(self, id: str, *, limit: int | None = None, offset: int | None = None) -> PaginatedResponseOfBroadcastFailure:
         """List failed broadcast messages"""
 
         params = build_params(
@@ -112,9 +82,7 @@ class AsyncBroadcastsResource(AsyncBaseResource):
         data = await self._http.get(f"/broadcasts/{id}/failures", params=params)
         return PaginatedResponseOfBroadcastFailure.model_validate(data)
 
-    async def list_suppressions(
-        self, id: str, *, limit: int | None = None, offset: int | None = None
-    ) -> PaginatedResponseOfBroadcastSuppression:
+    async def list_suppressions(self, id: str, *, limit: int | None = None, offset: int | None = None) -> PaginatedResponseOfBroadcastSuppression:
         """List broadcast suppressed recipients"""
 
         params = build_params(

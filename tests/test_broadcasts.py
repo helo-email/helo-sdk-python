@@ -5,21 +5,21 @@ from pytest_httpx import HTTPXMock
 import sdk_helo_email as helo
 
 
-def test_list(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_list(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="GET",
         json={
             "totalCount": 1,
-            "results": [
-                {
+            "results": [{
                     "id": "550e8400-e29b-41d4-a716-446655440000",
                     "createdAt": "2024-01-01T00:00:00Z",
                     "status": "accepted",
                     "subject": "example",
                     "completion": "example",
                     "messages": 1,
-                }
-            ],
+                }],
         },
     )
 
@@ -33,7 +33,9 @@ def test_list(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/broadcasts"
 
 
-def test_retrieve(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_retrieve(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="GET",
         json={
@@ -69,19 +71,19 @@ def test_retrieve(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/broadcasts/550e8400-e29b-41d4-a716-446655440000"
 
 
-def test_list_failures(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_list_failures(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="GET",
         json={
             "totalCount": 1,
-            "results": [
-                {
+            "results": [{
                     "recipients": {"to": [{"email": "example"}]},
                     "messageIndex": 1,
                     "errorCode": "example",
                     "errorMessage": "example",
-                }
-            ],
+                }],
         },
     )
 
@@ -95,7 +97,9 @@ def test_list_failures(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/broadcasts/550e8400-e29b-41d4-a716-446655440000/failures"
 
 
-def test_list_suppressions(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_list_suppressions(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="GET",
         json={"totalCount": 1, "results": ["example"]},
@@ -111,22 +115,22 @@ def test_list_suppressions(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/broadcasts/550e8400-e29b-41d4-a716-446655440000/suppressions"
 
 
-async def test_list_async(async_client: helo.AsyncHelo, httpx_mock: HTTPXMock) -> None:
+async def test_list_async(
+    async_client: helo.AsyncHelo, httpx_mock: HTTPXMock
+) -> None:
     """The async resource is generated from the same operation, so one call proves the pair."""
     httpx_mock.add_response(
         method="GET",
         json={
             "totalCount": 1,
-            "results": [
-                {
+            "results": [{
                     "id": "550e8400-e29b-41d4-a716-446655440000",
                     "createdAt": "2024-01-01T00:00:00Z",
                     "status": "accepted",
                     "subject": "example",
                     "completion": "example",
                     "messages": 1,
-                }
-            ],
+                }],
         },
     )
 

@@ -84,6 +84,7 @@ full jitter. A `Retry-After` header is honoured when present. Set `max_retries=0
 | `client.sending` | [docs/Sending.md](docs/Sending.md) |
 | `client.statistics` | [docs/Statistics.md](docs/Statistics.md) |
 | `client.suppressions` | [docs/Suppressions.md](docs/Suppressions.md) |
+| `client.templates` | [docs/Templates.md](docs/Templates.md) |
 | `client.webhooks` | [docs/Webhooks.md](docs/Webhooks.md) |
 
 ## Error handling
