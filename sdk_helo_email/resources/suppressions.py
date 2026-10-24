@@ -4,12 +4,25 @@ from collections.abc import Sequence
 
 from .._utils import build_body, build_params
 from ..types.shared import MailType, SuppressionReason
-from ..types.suppressions import CreateSuppressionsResponse, PaginatedResponseOfSuppressionResponse, RemoveSuppressionsResponse
+from ..types.suppressions import (
+    CreateSuppressionsResponse,
+    PaginatedResponseOfSuppressionResponse,
+    RemoveSuppressionsResponse,
+)
 from ._base import AsyncBaseResource, BaseResource
 
 
 class SuppressionsResource(BaseResource):
-    def list(self, *, channel_id: str, mail_type: MailType, reason: SuppressionReason | None = None, email: str | None = None, limit: int | None = None, offset: int | None = None) -> PaginatedResponseOfSuppressionResponse:
+    def list(
+        self,
+        *,
+        channel_id: str,
+        mail_type: MailType,
+        reason: SuppressionReason | None = None,
+        email: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+    ) -> PaginatedResponseOfSuppressionResponse:
         """List suppressions"""
 
         params = build_params(
@@ -23,7 +36,9 @@ class SuppressionsResource(BaseResource):
         data = self._http.get("/suppressions", params=params)
         return PaginatedResponseOfSuppressionResponse.model_validate(data)
 
-    def create(self, *, channel_id: str, mail_type: MailType, emails: Sequence[str]) -> CreateSuppressionsResponse:
+    def create(
+        self, *, channel_id: str, mail_type: MailType, emails: Sequence[str]
+    ) -> CreateSuppressionsResponse:
         """Create suppressions"""
 
         body = build_body(
@@ -34,7 +49,9 @@ class SuppressionsResource(BaseResource):
         data = self._http.post("/suppressions", json=body)
         return CreateSuppressionsResponse.model_validate(data)
 
-    def remove(self, *, channel_id: str, mail_type: MailType, emails: Sequence[str]) -> RemoveSuppressionsResponse:
+    def remove(
+        self, *, channel_id: str, mail_type: MailType, emails: Sequence[str]
+    ) -> RemoveSuppressionsResponse:
         """Remove suppressions"""
 
         body = build_body(
@@ -47,7 +64,16 @@ class SuppressionsResource(BaseResource):
 
 
 class AsyncSuppressionsResource(AsyncBaseResource):
-    async def list(self, *, channel_id: str, mail_type: MailType, reason: SuppressionReason | None = None, email: str | None = None, limit: int | None = None, offset: int | None = None) -> PaginatedResponseOfSuppressionResponse:
+    async def list(
+        self,
+        *,
+        channel_id: str,
+        mail_type: MailType,
+        reason: SuppressionReason | None = None,
+        email: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+    ) -> PaginatedResponseOfSuppressionResponse:
         """List suppressions"""
 
         params = build_params(
@@ -61,7 +87,9 @@ class AsyncSuppressionsResource(AsyncBaseResource):
         data = await self._http.get("/suppressions", params=params)
         return PaginatedResponseOfSuppressionResponse.model_validate(data)
 
-    async def create(self, *, channel_id: str, mail_type: MailType, emails: Sequence[str]) -> CreateSuppressionsResponse:
+    async def create(
+        self, *, channel_id: str, mail_type: MailType, emails: Sequence[str]
+    ) -> CreateSuppressionsResponse:
         """Create suppressions"""
 
         body = build_body(
@@ -72,7 +100,9 @@ class AsyncSuppressionsResource(AsyncBaseResource):
         data = await self._http.post("/suppressions", json=body)
         return CreateSuppressionsResponse.model_validate(data)
 
-    async def remove(self, *, channel_id: str, mail_type: MailType, emails: Sequence[str]) -> RemoveSuppressionsResponse:
+    async def remove(
+        self, *, channel_id: str, mail_type: MailType, emails: Sequence[str]
+    ) -> RemoveSuppressionsResponse:
         """Remove suppressions"""
 
         body = build_body(

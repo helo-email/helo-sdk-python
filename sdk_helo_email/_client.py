@@ -11,6 +11,7 @@ from ._http import (
     HttpClient,
 )
 from .resources import (
+    ActivityResource,
     AsyncActivityResource,
     AsyncBroadcastsResource,
     AsyncChannelsResource,
@@ -20,7 +21,6 @@ from .resources import (
     AsyncSuppressionsResource,
     AsyncTemplatesResource,
     AsyncWebhooksResource,
-    ActivityResource,
     BroadcastsResource,
     ChannelsResource,
     DomainsResource,

@@ -12,9 +12,9 @@ resource methods, which are converted for you.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, NotRequired
 
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import TypedDict
 
 from .shared import AttachmentDisposition
 

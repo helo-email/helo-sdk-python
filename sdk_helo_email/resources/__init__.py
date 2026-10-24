@@ -1,4 +1,4 @@
-from .activity import AsyncActivityResource, ActivityResource
+from .activity import ActivityResource, AsyncActivityResource
 from .broadcasts import AsyncBroadcastsResource, BroadcastsResource
 from .channels import AsyncChannelsResource, ChannelsResource
 from .domains import AsyncDomainsResource, DomainsResource

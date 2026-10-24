@@ -5,7 +5,15 @@ from typing import Any
 
 from pydantic import Field
 
-from .shared import AttachmentDisposition, DeliveryType, EventType, HeloModel, MailSource, MailType, MessageStatus
+from .shared import (
+    AttachmentDisposition,
+    DeliveryType,
+    EventType,
+    HeloModel,
+    MailSource,
+    MailType,
+    MessageStatus,
+)
 
 
 class ActivityMailAddress(HeloModel):

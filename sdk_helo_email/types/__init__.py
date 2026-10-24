@@ -1,13 +1,138 @@
-from .activity import ActivityEvent, ActivityMailAddress, Message, MessageDetailsResponse, MessageDetailsResponseAttachment, MessageDetailsResponseEvent, MessageDetailsResponseTracking, MessageStatistics, PaginatedEventsResponse, PaginatedMessagesResponse
-from .broadcasts import BroadcastContent, BroadcastContentAttachment, BroadcastContentTemplate, BroadcastDetailsResponse, BroadcastFailureResponse, BroadcastResponse, BroadcastStatistics, BroadcastTracking, PaginatedResponseOfBroadcast, PaginatedResponseOfBroadcastFailure, PaginatedResponseOfBroadcastSuppression, RecipientHeaders
-from .channels import ChannelBasicResponse, ChannelDetailsResponse, ChannelTracking, CreateChannelRequest, CreateChannelTracking, PaginationResultOfChannelBasicResponse, UpdateChannelRequest, UpdateChannelTracking
-from .domains import CreateDomainRequest, DnsRecordResponse, DnsRecordsResponse, DomainChannelResponse, DomainResponse, DomainWithDnsResponse, PaginatedResponseOfDomainResponse, UpdateDomainRequest
-from .sending import Attachment, SendBroadcastRequest, SendBroadcastRequestMessage, SendBroadcastRequestTemplate, SendBroadcastRequestTracking, SendBroadcastResponse, SendMessageAcceptedResponse, SendMessageBatchRequest, SendMessageBatchResponse, SendMessageFailedResponse, SendMessageRequest, SendMessageRequestTemplate, SendMessageRequestTracking, SendMessageResponse
-from .shared import AttachmentDisposition, BroadcastStatus, DeliveryType, DnsRecordStatus, DnsRecordType, EventType, HeloModel, MailAddress, MailSource, MailType, MessageStatus, SuppressionReason, WebhookEvent
-from .statistics import DeliveryStats, StatisticsDailyResponse, StatisticsDailyResponseResult, StatisticsHourlyResponse, StatisticsHourlyResponseResult, StatisticsTotalsResponse
-from .suppressions import CreateSuppressionsRequest, CreateSuppressionsResponse, PaginatedResponseOfSuppressionResponse, RemoveSuppressionResult, RemoveSuppressionsRequest, RemoveSuppressionsResponse, SuppressionResponse, SuppressionResult
-from .templates import CreateTemplateRequest, PaginatedResponseOfTemplateSummaryResponse, RenderDraftRequest, RenderTemplateRequest, RenderTemplateResponse, TemplateResponse, TemplateSummaryResponse, UpdateTemplateRequest
-from .webhooks import BouncedDetails, ClickedDetails, ClientDetails, ComplainedDetails, CreateWebhookRequest, DeliveredDetails, DeviceDetails, DomainKeyVerificationFailedPayload, DomainKeyVerifiedPayload, EmailBouncedWebhookPayload, EmailDeliveredWebhookPayload, EmailOpenedWebhookPayload, LinkClickedWebhookPayload, MessageAcceptedWebhookPayload, MessageProcessedWebhookPayload, OpenedDetails, PaginationResultOfWebhookResponse, RecipientComplainedWebhookPayload, RecipientResubscribedWebhookPayload, RecipientUnsubscribedWebhookPayload, ResubscribedDetails, ReturnPathDomainVerificationFailedPayload, ReturnPathDomainVerifiedPayload, UnsubscribedDetails, UpdateWebhookRequest, WebhookHeader, WebhookLastResponse, WebhookResponse
+from .activity import (
+    ActivityEvent,
+    ActivityMailAddress,
+    Message,
+    MessageDetailsResponse,
+    MessageDetailsResponseAttachment,
+    MessageDetailsResponseEvent,
+    MessageDetailsResponseTracking,
+    MessageStatistics,
+    PaginatedEventsResponse,
+    PaginatedMessagesResponse,
+)
+from .broadcasts import (
+    BroadcastContent,
+    BroadcastContentAttachment,
+    BroadcastContentTemplate,
+    BroadcastDetailsResponse,
+    BroadcastFailureResponse,
+    BroadcastResponse,
+    BroadcastStatistics,
+    BroadcastTracking,
+    PaginatedResponseOfBroadcast,
+    PaginatedResponseOfBroadcastFailure,
+    PaginatedResponseOfBroadcastSuppression,
+    RecipientHeaders,
+)
+from .channels import (
+    ChannelBasicResponse,
+    ChannelDetailsResponse,
+    ChannelTracking,
+    CreateChannelRequest,
+    CreateChannelTracking,
+    PaginationResultOfChannelBasicResponse,
+    UpdateChannelRequest,
+    UpdateChannelTracking,
+)
+from .domains import (
+    CreateDomainRequest,
+    DnsRecordResponse,
+    DnsRecordsResponse,
+    DomainChannelResponse,
+    DomainResponse,
+    DomainWithDnsResponse,
+    PaginatedResponseOfDomainResponse,
+    UpdateDomainRequest,
+)
+from .sending import (
+    Attachment,
+    SendBroadcastRequest,
+    SendBroadcastRequestMessage,
+    SendBroadcastRequestTemplate,
+    SendBroadcastRequestTracking,
+    SendBroadcastResponse,
+    SendMessageAcceptedResponse,
+    SendMessageBatchRequest,
+    SendMessageBatchResponse,
+    SendMessageFailedResponse,
+    SendMessageRequest,
+    SendMessageRequestTemplate,
+    SendMessageRequestTracking,
+    SendMessageResponse,
+)
+from .shared import (
+    AttachmentDisposition,
+    BroadcastStatus,
+    DeliveryType,
+    DnsRecordStatus,
+    DnsRecordType,
+    EventType,
+    HeloModel,
+    MailAddress,
+    MailSource,
+    MailType,
+    MessageStatus,
+    SuppressionReason,
+    WebhookEvent,
+)
+from .statistics import (
+    DeliveryStats,
+    StatisticsDailyResponse,
+    StatisticsDailyResponseResult,
+    StatisticsHourlyResponse,
+    StatisticsHourlyResponseResult,
+    StatisticsTotalsResponse,
+)
+from .suppressions import (
+    CreateSuppressionsRequest,
+    CreateSuppressionsResponse,
+    PaginatedResponseOfSuppressionResponse,
+    RemoveSuppressionResult,
+    RemoveSuppressionsRequest,
+    RemoveSuppressionsResponse,
+    SuppressionResponse,
+    SuppressionResult,
+)
+from .templates import (
+    CreateTemplateRequest,
+    PaginatedResponseOfTemplateSummaryResponse,
+    RenderDraftRequest,
+    RenderTemplateRequest,
+    RenderTemplateResponse,
+    TemplateResponse,
+    TemplateSummaryResponse,
+    UpdateTemplateRequest,
+)
+from .webhooks import (
+    BouncedDetails,
+    ClickedDetails,
+    ClientDetails,
+    ComplainedDetails,
+    CreateWebhookRequest,
+    DeliveredDetails,
+    DeviceDetails,
+    DomainKeyVerificationFailedPayload,
+    DomainKeyVerifiedPayload,
+    EmailBouncedWebhookPayload,
+    EmailDeliveredWebhookPayload,
+    EmailOpenedWebhookPayload,
+    LinkClickedWebhookPayload,
+    MessageAcceptedWebhookPayload,
+    MessageProcessedWebhookPayload,
+    OpenedDetails,
+    PaginationResultOfWebhookResponse,
+    RecipientComplainedWebhookPayload,
+    RecipientResubscribedWebhookPayload,
+    RecipientUnsubscribedWebhookPayload,
+    ResubscribedDetails,
+    ReturnPathDomainVerificationFailedPayload,
+    ReturnPathDomainVerifiedPayload,
+    UnsubscribedDetails,
+    UpdateWebhookRequest,
+    WebhookHeader,
+    WebhookLastResponse,
+    WebhookResponse,
+)
 
 __all__ = [
     "ActivityEvent",
