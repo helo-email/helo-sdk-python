@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from .._utils import build_body, build_params
+from .._utils import build_body, build_params, null_body
 from ..types.params import WebhookHeaderParam
 from ..types.shared import WebhookEvent
 from ..types.webhooks import PaginationResultOfWebhookResponse, WebhookResponse
@@ -42,9 +42,7 @@ class WebhooksResource(BaseResource):
             url=url,
             events=[item.value for item in events] if events else None,
             channel_id=channel_id,
-            additional_headers=[str(item) for item in additional_headers]
-            if additional_headers
-            else None,
+            additional_headers=additional_headers,
             enabled=enabled,
         )
         data = self._http.post("/webhooks", json=body)
@@ -65,6 +63,7 @@ class WebhooksResource(BaseResource):
         channel_id: str | None = None,
         additional_headers: Sequence[WebhookHeaderParam] | None = None,
         enabled: bool | None = None,
+        null_fields: Sequence[str] | None = None,
     ) -> WebhookResponse:
         """Update a webhook"""
 
@@ -72,11 +71,10 @@ class WebhooksResource(BaseResource):
             url=url,
             events=[item.value for item in events] if events else None,
             channel_id=channel_id,
-            additional_headers=[str(item) for item in additional_headers]
-            if additional_headers
-            else None,
+            additional_headers=additional_headers,
             enabled=enabled,
         )
+        body.update(null_body(null_fields, "channel_id", "additional_headers"))
         data = self._http.patch(f"/webhooks/{id}", json=body)
         return WebhookResponse.model_validate(data)
 
@@ -125,9 +123,7 @@ class AsyncWebhooksResource(AsyncBaseResource):
             url=url,
             events=[item.value for item in events] if events else None,
             channel_id=channel_id,
-            additional_headers=[str(item) for item in additional_headers]
-            if additional_headers
-            else None,
+            additional_headers=additional_headers,
             enabled=enabled,
         )
         data = await self._http.post("/webhooks", json=body)
@@ -148,6 +144,7 @@ class AsyncWebhooksResource(AsyncBaseResource):
         channel_id: str | None = None,
         additional_headers: Sequence[WebhookHeaderParam] | None = None,
         enabled: bool | None = None,
+        null_fields: Sequence[str] | None = None,
     ) -> WebhookResponse:
         """Update a webhook"""
 
@@ -155,11 +152,10 @@ class AsyncWebhooksResource(AsyncBaseResource):
             url=url,
             events=[item.value for item in events] if events else None,
             channel_id=channel_id,
-            additional_headers=[str(item) for item in additional_headers]
-            if additional_headers
-            else None,
+            additional_headers=additional_headers,
             enabled=enabled,
         )
+        body.update(null_body(null_fields, "channel_id", "additional_headers"))
         data = await self._http.patch(f"/webhooks/{id}", json=body)
         return WebhookResponse.model_validate(data)
 

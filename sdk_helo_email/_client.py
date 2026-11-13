@@ -36,8 +36,7 @@ def _resolve_api_key(api_key: str | None) -> str:
     resolved = api_key or os.environ.get("HELO_API_KEY")
     if not resolved:
         raise ValueError(
-            "No API key provided. Pass api_key= or set the HELO_API_KEY "
-            "environment variable."
+            "No API key provided. Pass api_key= or set the HELO_API_KEY environment variable."
         )
     return resolved
 

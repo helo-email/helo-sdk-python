@@ -44,7 +44,7 @@ class DomainsResource(BaseResource):
 
         body = build_body(
             name=name,
-            channel_ids=channel_ids if channel_ids else None,
+            channel_ids=channel_ids,
             enable_custom_tracking=enable_custom_tracking,
         )
         data = self._http.post("/domains", json=body)
@@ -66,7 +66,7 @@ class DomainsResource(BaseResource):
         """Update a domain"""
 
         body = build_body(
-            channel_ids=channel_ids if channel_ids else None,
+            channel_ids=channel_ids,
             enable_custom_tracking=enable_custom_tracking,
         )
         data = self._http.patch(f"/domains/{id}", json=body)
@@ -121,7 +121,7 @@ class AsyncDomainsResource(AsyncBaseResource):
 
         body = build_body(
             name=name,
-            channel_ids=channel_ids if channel_ids else None,
+            channel_ids=channel_ids,
             enable_custom_tracking=enable_custom_tracking,
         )
         data = await self._http.post("/domains", json=body)
@@ -143,7 +143,7 @@ class AsyncDomainsResource(AsyncBaseResource):
         """Update a domain"""
 
         body = build_body(
-            channel_ids=channel_ids if channel_ids else None,
+            channel_ids=channel_ids,
             enable_custom_tracking=enable_custom_tracking,
         )
         data = await self._http.patch(f"/domains/{id}", json=body)

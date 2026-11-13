@@ -44,7 +44,7 @@ class SuppressionsResource(BaseResource):
         body = build_body(
             channel_id=channel_id,
             mail_type=mail_type.value,
-            emails=emails if emails else None,
+            emails=emails,
         )
         data = self._http.post("/suppressions", json=body)
         return CreateSuppressionsResponse.model_validate(data)
@@ -57,7 +57,7 @@ class SuppressionsResource(BaseResource):
         body = build_body(
             channel_id=channel_id,
             mail_type=mail_type.value,
-            emails=emails if emails else None,
+            emails=emails,
         )
         data = self._http.post("/suppressions/remove", json=body)
         return RemoveSuppressionsResponse.model_validate(data)
@@ -95,7 +95,7 @@ class AsyncSuppressionsResource(AsyncBaseResource):
         body = build_body(
             channel_id=channel_id,
             mail_type=mail_type.value,
-            emails=emails if emails else None,
+            emails=emails,
         )
         data = await self._http.post("/suppressions", json=body)
         return CreateSuppressionsResponse.model_validate(data)
@@ -108,7 +108,7 @@ class AsyncSuppressionsResource(AsyncBaseResource):
         body = build_body(
             channel_id=channel_id,
             mail_type=mail_type.value,
-            emails=emails if emails else None,
+            emails=emails,
         )
         data = await self._http.post("/suppressions/remove", json=body)
         return RemoveSuppressionsResponse.model_validate(data)

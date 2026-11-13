@@ -1,22 +1,24 @@
 from __future__ import annotations
 
+import json
+
 from pytest_httpx import HTTPXMock
 
 import sdk_helo_email as helo
 
 
-def test_list(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_list(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="GET",
         json={
             "totalCount": 1,
-            "results": [{
+            "results": [
+                {
                     "email": "example",
                     "reason": "bounce",
                     "createdAt": "2024-01-01T00:00:00Z",
-                }],
+                }
+            ],
         },
     )
 
@@ -31,9 +33,7 @@ def test_list(
     assert request.url.path == "/suppressions"
 
 
-def test_create(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_create(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={"results": [{"email": "example", "success": True}]},
@@ -49,11 +49,14 @@ def test_create(
     assert request is not None
     assert request.method == "POST"
     assert request.url.path == "/suppressions"
+    assert json.loads(request.content) == {
+        "channelId": "550e8400-e29b-41d4-a716-446655440000",
+        "mailType": helo.MailType.TRANSACTIONAL,
+        "emails": ["test@example.com"],
+    }
 
 
-def test_remove(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_remove(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={"results": [{"email": "example", "success": True}]},
@@ -69,21 +72,26 @@ def test_remove(
     assert request is not None
     assert request.method == "POST"
     assert request.url.path == "/suppressions/remove"
+    assert json.loads(request.content) == {
+        "channelId": "550e8400-e29b-41d4-a716-446655440000",
+        "mailType": helo.MailType.TRANSACTIONAL,
+        "emails": ["test@example.com"],
+    }
 
 
-async def test_list_async(
-    async_client: helo.AsyncHelo, httpx_mock: HTTPXMock
-) -> None:
+async def test_list_async(async_client: helo.AsyncHelo, httpx_mock: HTTPXMock) -> None:
     """The async resource is generated from the same operation, so one call proves the pair."""
     httpx_mock.add_response(
         method="GET",
         json={
             "totalCount": 1,
-            "results": [{
+            "results": [
+                {
                     "email": "example",
                     "reason": "bounce",
                     "createdAt": "2024-01-01T00:00:00Z",
-                }],
+                }
+            ],
         },
     )
 

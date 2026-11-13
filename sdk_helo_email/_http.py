@@ -45,6 +45,9 @@ _STATUS_TO_ERROR: dict[int, type[APIError]] = {
 # Status codes worth retrying: rate limiting and transient server/gateway errors.
 _RETRY_STATUS = frozenset({408, 429, 500, 502, 503, 504})
 
+# Methods that can be repeated without doing anything twice.
+_IDEMPOTENT_METHODS = frozenset({"GET", "HEAD", "OPTIONS", "PUT", "DELETE"})
+
 
 def _build_user_agent() -> str:
     """Name the package, its version and the interpreter carrying it."""
@@ -89,12 +92,38 @@ def _parse_retry_after(response: httpx.Response) -> float | None:
     return delay if delay > 0 else None
 
 
-def _backoff_delay(attempt: int, retry_after: float | None) -> float:
-    if retry_after is not None:
-        return min(retry_after, _MAX_RETRY_DELAY)
+def _backoff_delay(attempt: int) -> float:
     # Exponential backoff with full jitter.
     base = min(_MAX_RETRY_DELAY, _INITIAL_RETRY_DELAY * (2**attempt))
     return random.uniform(0, base)
+
+
+def _can_repeat(method: str, headers: dict[str, str] | None) -> bool:
+    """Whether sending the request again cannot do anything twice: its method is
+    idempotent, or it carries an idempotency key the API deduplicates on."""
+    if method.upper() in _IDEMPOTENT_METHODS:
+        return True
+    return any(name.lower().endswith("idempotency-key") for name in headers or {})
+
+
+def _retry_delay(
+    response: httpx.Response, attempt: int, max_retries: int, can_repeat: bool
+) -> float | None:
+    """How long to wait before retrying this response, or None not to retry it.
+
+    A 429 is retried even when the request can't safely be repeated, since the
+    server refused it without acting on it. A Retry-After longer than the SDK
+    waits is not retried early: the error goes to the caller instead.
+    """
+    status = response.status_code
+    if attempt >= max_retries or status not in _RETRY_STATUS:
+        return None
+    if status != 429 and not can_repeat:
+        return None
+    retry_after = _parse_retry_after(response)
+    if retry_after is None:
+        return _backoff_delay(attempt)
+    return retry_after if retry_after <= _MAX_RETRY_DELAY else None
 
 
 def _error_message(data: dict[str, Any], status_code: int) -> str:
@@ -163,24 +192,27 @@ class HttpClient:
         json: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
     ) -> Any:
+        can_repeat = _can_repeat(method, headers)
         for attempt in range(self._max_retries + 1):
+            retry_network_error = can_repeat and attempt < self._max_retries
             try:
                 response = self._client.request(
                     method, path, params=params, json=json, headers=headers
                 )
             except httpx.TimeoutException as exc:
-                if attempt < self._max_retries:
-                    time.sleep(_backoff_delay(attempt, None))
+                if retry_network_error:
+                    time.sleep(_backoff_delay(attempt))
                     continue
                 raise APITimeoutError() from exc
             except httpx.TransportError as exc:
-                if attempt < self._max_retries:
-                    time.sleep(_backoff_delay(attempt, None))
+                if retry_network_error:
+                    time.sleep(_backoff_delay(attempt))
                     continue
                 raise APIConnectionError() from exc
 
-            if response.status_code in _RETRY_STATUS and attempt < self._max_retries:
-                time.sleep(_backoff_delay(attempt, _parse_retry_after(response)))
+            delay = _retry_delay(response, attempt, self._max_retries, can_repeat)
+            if delay is not None:
+                time.sleep(delay)
                 continue
             return _handle_response(response)
 
@@ -268,24 +300,27 @@ class AsyncHttpClient:
         json: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
     ) -> Any:
+        can_repeat = _can_repeat(method, headers)
         for attempt in range(self._max_retries + 1):
+            retry_network_error = can_repeat and attempt < self._max_retries
             try:
                 response = await self._client.request(
                     method, path, params=params, json=json, headers=headers
                 )
             except httpx.TimeoutException as exc:
-                if attempt < self._max_retries:
-                    await asyncio.sleep(_backoff_delay(attempt, None))
+                if retry_network_error:
+                    await asyncio.sleep(_backoff_delay(attempt))
                     continue
                 raise APITimeoutError() from exc
             except httpx.TransportError as exc:
-                if attempt < self._max_retries:
-                    await asyncio.sleep(_backoff_delay(attempt, None))
+                if retry_network_error:
+                    await asyncio.sleep(_backoff_delay(attempt))
                     continue
                 raise APIConnectionError() from exc
 
-            if response.status_code in _RETRY_STATUS and attempt < self._max_retries:
-                await asyncio.sleep(_backoff_delay(attempt, _parse_retry_after(response)))
+            delay = _retry_delay(response, attempt, self._max_retries, can_repeat)
+            if delay is not None:
+                await asyncio.sleep(delay)
                 continue
             return _handle_response(response)
 

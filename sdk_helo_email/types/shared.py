@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
@@ -15,7 +16,21 @@ class HeloModel(BaseModel):
     )
 
 
-class AttachmentDisposition(str, Enum):
+class HeloEnum(str, Enum):
+    """Base for every enum. A value this version of the SDK doesn't know, one the API
+    added later, becomes a new member instead of failing to parse."""
+
+    @classmethod
+    def _missing_(cls, value: object) -> Any:
+        if not isinstance(value, str):
+            return None
+        member = str.__new__(cls, value)
+        member._name_ = value.upper()
+        member._value_ = value
+        return member
+
+
+class AttachmentDisposition(HeloEnum):
     """How the attachment is presented. Use `attachment` for downloadable files and `inline` for
     embedded content (e.g. images referenced in HTML).
     """
@@ -24,7 +39,7 @@ class AttachmentDisposition(str, Enum):
     INLINE = "inline"
 
 
-class BroadcastStatus(str, Enum):
+class BroadcastStatus(HeloEnum):
     """Current processing state of a broadcast. `accepted` — queued, waiting for the channel to
     become available. `processing` — actively sending messages. `completed` — all messages
     have been processed. `canceled` — stopped before completing.
@@ -36,7 +51,7 @@ class BroadcastStatus(str, Enum):
     CANCELED = "canceled"
 
 
-class DeliveryType(str, Enum):
+class DeliveryType(HeloEnum):
     """Delivery mode for a channel. `live` sends real emails, whereas `sandbox` accepts and
     processes messages without delivering them to recipients.
     """
@@ -45,19 +60,19 @@ class DeliveryType(str, Enum):
     SANDBOX = "sandbox"
 
 
-class DnsRecordStatus(str, Enum):
+class DnsRecordStatus(HeloEnum):
     PENDING = "pending"
     VERIFIED = "verified"
     FAILING = "failing"
     FAILED = "failed"
 
 
-class DnsRecordType(str, Enum):
+class DnsRecordType(HeloEnum):
     TXT = "txt"
     CNAME = "cname"
 
 
-class EventType(str, Enum):
+class EventType(HeloEnum):
     ACCEPTED = "accepted"
     PROCESSED = "processed"
     DELIVERED = "delivered"
@@ -69,29 +84,29 @@ class EventType(str, Enum):
     RESUBSCRIBED = "resubscribed"
 
 
-class MailSource(str, Enum):
+class MailSource(HeloEnum):
     API = "api"
     SMTP = "smtp"
 
 
-class MailType(str, Enum):
+class MailType(HeloEnum):
     TRANSACTIONAL = "transactional"
     BROADCAST = "broadcast"
 
 
-class MessageStatus(str, Enum):
+class MessageStatus(HeloEnum):
     QUEUED = "queued"
     SENT = "sent"
 
 
-class SuppressionReason(str, Enum):
+class SuppressionReason(HeloEnum):
     BOUNCE = "bounce"
     COMPLAINT = "complaint"
     UNSUBSCRIBE = "unsubscribe"
     MANUAL = "manual"
 
 
-class WebhookEvent(str, Enum):
+class WebhookEvent(HeloEnum):
     """Email lifecycle event type that can trigger a webhook delivery."""
 
     MESSAGE_ACCEPTED = "message-accepted"

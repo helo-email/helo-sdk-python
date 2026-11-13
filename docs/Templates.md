@@ -4,19 +4,19 @@ Manage templates for sending.
 
 | Method | HTTP request | Description |
 | ------ | ------------ | ----------- |
-| [**templates.list**](#list) | **GET** /templates |  |
-| [**templates.create**](#create) | **POST** /templates |  |
-| [**templates.render_draft**](#render_draft) | **POST** /templates/render |  |
-| [**templates.retrieve**](#retrieve) | **GET** /templates/{id} |  |
-| [**templates.update**](#update) | **PATCH** /templates/{id} |  |
-| [**templates.delete**](#delete) | **DELETE** /templates/{id} |  |
-| [**templates.render**](#render) | **POST** /templates/{id}/render |  |
+| [**templates.list**](#list) | **GET** /templates | List all templates |
+| [**templates.create**](#create) | **POST** /templates | Create a template |
+| [**templates.render_draft**](#render_draft) | **POST** /templates/render | Render template content |
+| [**templates.retrieve**](#retrieve) | **GET** /templates/{id} | Retrieve a template |
+| [**templates.update**](#update) | **PATCH** /templates/{id} | Update a template |
+| [**templates.delete**](#delete) | **DELETE** /templates/{id} | Delete a template |
+| [**templates.render**](#render) | **POST** /templates/{id}/render | Render a template |
 
 ## list
 
 `GET /templates`
 
-Fetch a paginated list of templates.
+Retrieves a paginated list of templates, optionally filtered by name or channel.
 
 ```python Templates_list
 import sdk_helo_email as helo
@@ -30,7 +30,7 @@ paginated_response_of_template_summary = client.templates.list(limit=10, offset=
 
 `POST /templates`
 
-Create a new template.
+Creates a new template from HTML, MJML, or plain-text content. MJML is compiled to HTML when the template is saved.
 
 ```python Templates_create
 import sdk_helo_email as helo
@@ -51,7 +51,7 @@ template = client.templates.create(
 
 `POST /templates/render`
 
-Render ad-hoc template content (Subject/Html/Text) with sample data, without persisting anything.
+Renders unsaved template content (subject, HTML or MJML, and text) with sample data, without persisting anything.
 
 ```python Templates_renderDraft
 import sdk_helo_email as helo
@@ -71,7 +71,7 @@ render_template = client.templates.render_draft(
 
 `GET /templates/{id}`
 
-Fetch a single template.
+Fetches the details and content of a specific template.
 
 ```python Templates_retrieve
 import sdk_helo_email as helo
@@ -85,7 +85,7 @@ template = client.templates.retrieve("550e8400-e29b-41d4-a716-446655440000")
 
 `PATCH /templates/{id}`
 
-Update an existing template.
+Modifies an existing template. Only the provided fields are changed.
 
 ```python Templates_update
 import sdk_helo_email as helo
@@ -108,7 +108,7 @@ template = client.templates.update(
 
 `DELETE /templates/{id}`
 
-Delete a template.
+Permanently removes a template. This action cannot be undone.
 
 ```python Templates_delete
 import sdk_helo_email as helo
@@ -122,7 +122,7 @@ client.templates.delete("550e8400-e29b-41d4-a716-446655440000")
 
 `POST /templates/{id}/render`
 
-Render a saved template with sample data.
+Renders a saved template with sample data, to preview the output before sending.
 
 ```python Templates_render
 import sdk_helo_email as helo

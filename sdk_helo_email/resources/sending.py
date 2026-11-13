@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from uuid import uuid4
 
 from .._utils import build_body, build_headers
 from ..types.params import (
@@ -46,23 +47,24 @@ class SendingResource(BaseResource):
 
         body = build_body(
             from_=from_,
-            to=[str(item) for item in to] if to else None,
-            cc=[str(item) for item in cc] if cc else None,
-            bcc=[str(item) for item in bcc] if bcc else None,
-            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            to=to,
+            cc=cc,
+            bcc=bcc,
+            reply_to=reply_to,
             subject=subject,
             html=html,
             text=text,
             template=template,
             tracking=tracking,
-            attachments=[str(item) for item in attachments] if attachments else None,
-            tags=tags if tags else None,
+            attachments=attachments,
+            tags=tags,
             headers=headers,
             metadata=metadata,
         )
         headers = build_headers(
             **{"X-Helo-Channel-Id": channel_id},
-            **{"X-Helo-Idempotency-Key": idempotency_key},
+            # Generated once per call, so a retry is recognized as the same request.
+            **{"X-Helo-Idempotency-Key": idempotency_key or str(uuid4())},
         )
         data = self._http.post("/send/transactional", json=body, headers=headers)
         return SendMessageAcceptedResponse.model_validate(data)
@@ -77,11 +79,12 @@ class SendingResource(BaseResource):
         """Send transactional emails in batch"""
 
         body = build_body(
-            requests=[str(item) for item in requests] if requests else None,
+            requests=requests,
         )
         headers = build_headers(
             **{"X-Helo-Channel-Id": channel_id},
-            **{"X-Helo-Idempotency-Key": idempotency_key},
+            # Generated once per call, so a retry is recognized as the same request.
+            **{"X-Helo-Idempotency-Key": idempotency_key or str(uuid4())},
         )
         data = self._http.post("/send/transactional/batch", json=body, headers=headers)
         return SendMessageBatchResponse.model_validate(data)
@@ -106,17 +109,18 @@ class SendingResource(BaseResource):
         body = build_body(
             from_=from_,
             template=template,
-            messages=[str(item) for item in messages] if messages else None,
-            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            messages=messages,
+            reply_to=reply_to,
             tracking=tracking,
-            attachments=[str(item) for item in attachments] if attachments else None,
-            tags=tags if tags else None,
+            attachments=attachments,
+            tags=tags,
             headers=headers,
             metadata=metadata,
         )
         headers = build_headers(
             **{"X-Helo-Channel-Id": channel_id},
-            **{"X-Helo-Idempotency-Key": idempotency_key},
+            # Generated once per call, so a retry is recognized as the same request.
+            **{"X-Helo-Idempotency-Key": idempotency_key or str(uuid4())},
         )
         data = self._http.post("/send/broadcast", json=body, headers=headers)
         return SendBroadcastResponse.model_validate(data)
@@ -145,23 +149,24 @@ class SendingResource(BaseResource):
 
         body = build_body(
             from_=from_,
-            to=[str(item) for item in to] if to else None,
-            cc=[str(item) for item in cc] if cc else None,
-            bcc=[str(item) for item in bcc] if bcc else None,
-            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            to=to,
+            cc=cc,
+            bcc=bcc,
+            reply_to=reply_to,
             subject=subject,
             html=html,
             text=text,
             template=template,
             tracking=tracking,
-            attachments=[str(item) for item in attachments] if attachments else None,
-            tags=tags if tags else None,
+            attachments=attachments,
+            tags=tags,
             headers=headers,
             metadata=metadata,
         )
         headers = build_headers(
             **{"X-Helo-Channel-Id": channel_id},
-            **{"X-Helo-Idempotency-Key": idempotency_key},
+            # Generated once per call, so a retry is recognized as the same request.
+            **{"X-Helo-Idempotency-Key": idempotency_key or str(uuid4())},
         )
         data = self._http.post("/send/broadcast/message", json=body, headers=headers)
         return SendMessageAcceptedResponse.model_validate(data)
@@ -192,23 +197,24 @@ class AsyncSendingResource(AsyncBaseResource):
 
         body = build_body(
             from_=from_,
-            to=[str(item) for item in to] if to else None,
-            cc=[str(item) for item in cc] if cc else None,
-            bcc=[str(item) for item in bcc] if bcc else None,
-            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            to=to,
+            cc=cc,
+            bcc=bcc,
+            reply_to=reply_to,
             subject=subject,
             html=html,
             text=text,
             template=template,
             tracking=tracking,
-            attachments=[str(item) for item in attachments] if attachments else None,
-            tags=tags if tags else None,
+            attachments=attachments,
+            tags=tags,
             headers=headers,
             metadata=metadata,
         )
         headers = build_headers(
             **{"X-Helo-Channel-Id": channel_id},
-            **{"X-Helo-Idempotency-Key": idempotency_key},
+            # Generated once per call, so a retry is recognized as the same request.
+            **{"X-Helo-Idempotency-Key": idempotency_key or str(uuid4())},
         )
         data = await self._http.post("/send/transactional", json=body, headers=headers)
         return SendMessageAcceptedResponse.model_validate(data)
@@ -223,11 +229,12 @@ class AsyncSendingResource(AsyncBaseResource):
         """Send transactional emails in batch"""
 
         body = build_body(
-            requests=[str(item) for item in requests] if requests else None,
+            requests=requests,
         )
         headers = build_headers(
             **{"X-Helo-Channel-Id": channel_id},
-            **{"X-Helo-Idempotency-Key": idempotency_key},
+            # Generated once per call, so a retry is recognized as the same request.
+            **{"X-Helo-Idempotency-Key": idempotency_key or str(uuid4())},
         )
         data = await self._http.post("/send/transactional/batch", json=body, headers=headers)
         return SendMessageBatchResponse.model_validate(data)
@@ -252,17 +259,18 @@ class AsyncSendingResource(AsyncBaseResource):
         body = build_body(
             from_=from_,
             template=template,
-            messages=[str(item) for item in messages] if messages else None,
-            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            messages=messages,
+            reply_to=reply_to,
             tracking=tracking,
-            attachments=[str(item) for item in attachments] if attachments else None,
-            tags=tags if tags else None,
+            attachments=attachments,
+            tags=tags,
             headers=headers,
             metadata=metadata,
         )
         headers = build_headers(
             **{"X-Helo-Channel-Id": channel_id},
-            **{"X-Helo-Idempotency-Key": idempotency_key},
+            # Generated once per call, so a retry is recognized as the same request.
+            **{"X-Helo-Idempotency-Key": idempotency_key or str(uuid4())},
         )
         data = await self._http.post("/send/broadcast", json=body, headers=headers)
         return SendBroadcastResponse.model_validate(data)
@@ -291,23 +299,24 @@ class AsyncSendingResource(AsyncBaseResource):
 
         body = build_body(
             from_=from_,
-            to=[str(item) for item in to] if to else None,
-            cc=[str(item) for item in cc] if cc else None,
-            bcc=[str(item) for item in bcc] if bcc else None,
-            reply_to=[str(item) for item in reply_to] if reply_to else None,
+            to=to,
+            cc=cc,
+            bcc=bcc,
+            reply_to=reply_to,
             subject=subject,
             html=html,
             text=text,
             template=template,
             tracking=tracking,
-            attachments=[str(item) for item in attachments] if attachments else None,
-            tags=tags if tags else None,
+            attachments=attachments,
+            tags=tags,
             headers=headers,
             metadata=metadata,
         )
         headers = build_headers(
             **{"X-Helo-Channel-Id": channel_id},
-            **{"X-Helo-Idempotency-Key": idempotency_key},
+            # Generated once per call, so a retry is recognized as the same request.
+            **{"X-Helo-Idempotency-Key": idempotency_key or str(uuid4())},
         )
         data = await self._http.post("/send/broadcast/message", json=body, headers=headers)
         return SendMessageAcceptedResponse.model_validate(data)

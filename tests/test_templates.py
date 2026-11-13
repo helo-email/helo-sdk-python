@@ -1,29 +1,30 @@
 from __future__ import annotations
 
+import json
+
 from pytest_httpx import HTTPXMock
 
 import sdk_helo_email as helo
 
 
-def test_list(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_list(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="GET",
         json={
             "totalCount": 1,
-            "results": [{
+            "results": [
+                {
                     "id": "550e8400-e29b-41d4-a716-446655440000",
                     "createdAt": "2024-01-01T00:00:00Z",
                     "updatedAt": "2024-01-01T00:00:00Z",
                     "name": "example",
                     "subject": "example",
-                }],
+                }
+            ],
         },
     )
 
-    client.templates.list(
-    )
+    client.templates.list()
 
     request = httpx_mock.get_request()
     assert request is not None
@@ -31,9 +32,7 @@ def test_list(
     assert request.url.path == "/templates"
 
 
-def test_create(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_create(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={
@@ -59,11 +58,17 @@ def test_create(
     assert request is not None
     assert request.method == "POST"
     assert request.url.path == "/templates"
+    assert json.loads(request.content) == {
+        "name": "test-name",
+        "subject": "test-subject",
+        "html": "test-html",
+        "mjml": "test-mjml",
+        "text": "test-text",
+        "channelIds": ["550e8400-e29b-41d4-a716-446655440000"],
+    }
 
 
-def test_render_draft(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_render_draft(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={"subject": "example"},
@@ -81,11 +86,16 @@ def test_render_draft(
     assert request is not None
     assert request.method == "POST"
     assert request.url.path == "/templates/render"
+    assert json.loads(request.content) == {
+        "subject": "test-subject",
+        "html": "test-html",
+        "mjml": "test-mjml",
+        "text": "test-text",
+        "inlineStyles": True,
+    }
 
 
-def test_retrieve(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_retrieve(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="GET",
         json={
@@ -108,9 +118,7 @@ def test_retrieve(
     assert request.url.path == "/templates/550e8400-e29b-41d4-a716-446655440000"
 
 
-def test_update(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_update(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="PATCH",
         json={
@@ -138,11 +146,18 @@ def test_update(
     assert request is not None
     assert request.method == "PATCH"
     assert request.url.path == "/templates/550e8400-e29b-41d4-a716-446655440000"
+    assert json.loads(request.content) == {
+        "name": "test-name",
+        "subject": "test-subject",
+        "html": "test-html",
+        "mjml": "test-mjml",
+        "text": "test-text",
+        "channelIds": ["550e8400-e29b-41d4-a716-446655440000"],
+        "version": 10,
+    }
 
 
-def test_delete(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_delete(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="DELETE",
         status_code=204,
@@ -158,9 +173,7 @@ def test_delete(
     assert request.url.path == "/templates/550e8400-e29b-41d4-a716-446655440000"
 
 
-def test_render(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_render(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={"subject": "example"},
@@ -175,28 +188,30 @@ def test_render(
     assert request is not None
     assert request.method == "POST"
     assert request.url.path == "/templates/550e8400-e29b-41d4-a716-446655440000/render"
+    assert json.loads(request.content) == {
+        "inlineStyles": True,
+    }
 
 
-async def test_list_async(
-    async_client: helo.AsyncHelo, httpx_mock: HTTPXMock
-) -> None:
+async def test_list_async(async_client: helo.AsyncHelo, httpx_mock: HTTPXMock) -> None:
     """The async resource is generated from the same operation, so one call proves the pair."""
     httpx_mock.add_response(
         method="GET",
         json={
             "totalCount": 1,
-            "results": [{
+            "results": [
+                {
                     "id": "550e8400-e29b-41d4-a716-446655440000",
                     "createdAt": "2024-01-01T00:00:00Z",
                     "updatedAt": "2024-01-01T00:00:00Z",
                     "name": "example",
                     "subject": "example",
-                }],
+                }
+            ],
         },
     )
 
-    await async_client.templates.list(
-    )
+    await async_client.templates.list()
 
     request = httpx_mock.get_request()
     assert request is not None

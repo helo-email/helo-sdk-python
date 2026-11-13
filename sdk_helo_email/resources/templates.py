@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Any
 
-from .._utils import build_body, build_params
+from .._utils import build_body, build_params, null_body
 from ..types.templates import (
     PaginatedResponseOfTemplateSummaryResponse,
     RenderTemplateResponse,
@@ -21,6 +21,8 @@ class TemplatesResource(BaseResource):
         name: str | None = None,
         channel_ids: Sequence[str] | None = None,
     ) -> PaginatedResponseOfTemplateSummaryResponse:
+        """List all templates"""
+
         params = build_params(
             limit=limit,
             offset=offset,
@@ -40,13 +42,15 @@ class TemplatesResource(BaseResource):
         text: str | None = None,
         channel_ids: Sequence[str] | None = None,
     ) -> TemplateResponse:
+        """Create a template"""
+
         body = build_body(
             name=name,
             subject=subject,
             html=html,
             mjml=mjml,
             text=text,
-            channel_ids=channel_ids if channel_ids else None,
+            channel_ids=channel_ids,
         )
         data = self._http.post("/templates", json=body)
         return TemplateResponse.model_validate(data)
@@ -61,6 +65,8 @@ class TemplatesResource(BaseResource):
         inline_styles: bool | None = None,
         data: dict[str, Any] | None = None,
     ) -> RenderTemplateResponse:
+        """Render template content"""
+
         body = build_body(
             subject=subject,
             html=html,
@@ -73,6 +79,8 @@ class TemplatesResource(BaseResource):
         return RenderTemplateResponse.model_validate(data)
 
     def retrieve(self, id: str) -> TemplateResponse:
+        """Retrieve a template"""
+
         data = self._http.get(f"/templates/{id}")
         return TemplateResponse.model_validate(data)
 
@@ -87,25 +95,33 @@ class TemplatesResource(BaseResource):
         text: str | None = None,
         channel_ids: Sequence[str] | None = None,
         version: int | None = None,
+        null_fields: Sequence[str] | None = None,
     ) -> TemplateResponse:
+        """Update a template"""
+
         body = build_body(
             name=name,
             subject=subject,
             html=html,
             mjml=mjml,
             text=text,
-            channel_ids=channel_ids if channel_ids else None,
+            channel_ids=channel_ids,
             version=version,
         )
+        body.update(null_body(null_fields, "html", "mjml", "text", "channel_ids"))
         data = self._http.patch(f"/templates/{id}", json=body)
         return TemplateResponse.model_validate(data)
 
     def delete(self, id: str) -> None:
+        """Delete a template"""
+
         self._http.delete(f"/templates/{id}")
 
     def render(
         self, id: str, *, inline_styles: bool | None = None, data: dict[str, Any] | None = None
     ) -> RenderTemplateResponse:
+        """Render a template"""
+
         body = build_body(
             inline_styles=inline_styles,
             data=data,
@@ -123,6 +139,8 @@ class AsyncTemplatesResource(AsyncBaseResource):
         name: str | None = None,
         channel_ids: Sequence[str] | None = None,
     ) -> PaginatedResponseOfTemplateSummaryResponse:
+        """List all templates"""
+
         params = build_params(
             limit=limit,
             offset=offset,
@@ -142,13 +160,15 @@ class AsyncTemplatesResource(AsyncBaseResource):
         text: str | None = None,
         channel_ids: Sequence[str] | None = None,
     ) -> TemplateResponse:
+        """Create a template"""
+
         body = build_body(
             name=name,
             subject=subject,
             html=html,
             mjml=mjml,
             text=text,
-            channel_ids=channel_ids if channel_ids else None,
+            channel_ids=channel_ids,
         )
         data = await self._http.post("/templates", json=body)
         return TemplateResponse.model_validate(data)
@@ -163,6 +183,8 @@ class AsyncTemplatesResource(AsyncBaseResource):
         inline_styles: bool | None = None,
         data: dict[str, Any] | None = None,
     ) -> RenderTemplateResponse:
+        """Render template content"""
+
         body = build_body(
             subject=subject,
             html=html,
@@ -175,6 +197,8 @@ class AsyncTemplatesResource(AsyncBaseResource):
         return RenderTemplateResponse.model_validate(data)
 
     async def retrieve(self, id: str) -> TemplateResponse:
+        """Retrieve a template"""
+
         data = await self._http.get(f"/templates/{id}")
         return TemplateResponse.model_validate(data)
 
@@ -189,25 +213,33 @@ class AsyncTemplatesResource(AsyncBaseResource):
         text: str | None = None,
         channel_ids: Sequence[str] | None = None,
         version: int | None = None,
+        null_fields: Sequence[str] | None = None,
     ) -> TemplateResponse:
+        """Update a template"""
+
         body = build_body(
             name=name,
             subject=subject,
             html=html,
             mjml=mjml,
             text=text,
-            channel_ids=channel_ids if channel_ids else None,
+            channel_ids=channel_ids,
             version=version,
         )
+        body.update(null_body(null_fields, "html", "mjml", "text", "channel_ids"))
         data = await self._http.patch(f"/templates/{id}", json=body)
         return TemplateResponse.model_validate(data)
 
     async def delete(self, id: str) -> None:
+        """Delete a template"""
+
         await self._http.delete(f"/templates/{id}")
 
     async def render(
         self, id: str, *, inline_styles: bool | None = None, data: dict[str, Any] | None = None
     ) -> RenderTemplateResponse:
+        """Render a template"""
+
         body = build_body(
             inline_styles=inline_styles,
             data=data,

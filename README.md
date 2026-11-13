@@ -70,8 +70,27 @@ asyncio.run(main())
 
 ## Automatic retries
 
-Connection errors, timeouts, `429`, and `5xx` responses are retried with exponential backoff and
-full jitter. A `Retry-After` header is honoured when present. Set `max_retries=0` to disable.
+A request that fails with a network error, a timeout, or a `408`, `429`, `500`, `502`, `503` or
+`504` response is retried up to 2 times, with exponential backoff and full jitter. It
+is only retried when sending it again can't do anything twice: a `GET`, `PUT` or `DELETE`,
+or a request carrying an idempotency key. A `429` is always retried, since the server
+refused the request without acting on it. A `Retry-After` header is honoured; one asking
+for more than 8 seconds is not retried early, and the error is returned instead.
+
+Operations that take an idempotency key generate one for each call when you don't pass
+one, and send it on every retry, so a send whose response was lost is never sent twice.
+Pass your own key to make your own retries (a background job run again, say) safe too.
+
+Set `max_retries=0` on the client to disable retries, or another number to change how many.
+
+## Clearing a field
+
+Leaving an argument out (or passing `None`) leaves the field as it is. To clear a field the API
+accepts `null` for, name it in `null_fields`; the method's docstring lists which ones it takes:
+
+```python
+client.templates.update(template_id, null_fields=["text"])
+```
 
 ## Resources
 

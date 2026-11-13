@@ -1,13 +1,13 @@
 from __future__ import annotations
 
+import json
+
 from pytest_httpx import HTTPXMock
 
 import sdk_helo_email as helo
 
 
-def test_send_transactional(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_send_transactional(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
@@ -22,13 +22,6 @@ def test_send_transactional(
         subject="Hello from Helo",
         html="<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
         text="This is a test message, delivered with <3 by Helo.",
-        template={
-            "id": "550e8400-e29b-41d4-a716-446655440000",
-            "subject": "test-subject",
-            "html": "test-html",
-            "text": "test-text",
-            "inlineStyles": True,
-        },
         tracking={"opens": True, "links": True},
         attachments=[
             {
@@ -48,13 +41,32 @@ def test_send_transactional(
     assert request is not None
     assert request.method == "POST"
     assert request.url.path == "/send/transactional"
+    assert json.loads(request.content) == {
+        "from": {"email": "from@yourdomain.com", "name": "From name"},
+        "to": [{"email": "to@example.com", "name": "To name"}],
+        "cc": [{"email": "cc@example.com", "name": "Cc name"}],
+        "bcc": [{"email": "bcc@example.com", "name": "Bcc name"}],
+        "replyTo": [{"email": "reply-to@example.com", "name": "Reply-To name"}],
+        "subject": "Hello from Helo",
+        "html": "<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
+        "text": "This is a test message, delivered with <3 by Helo.",
+        "tracking": {"opens": True, "links": True},
+        "attachments": [
+            {
+                "content": "SGVsbG8gd29ybGQ=",
+                "contentId": "test-contentId",
+                "contentType": "test-contentType",
+                "fileName": "test-fileName",
+                "disposition": helo.AttachmentDisposition.ATTACHMENT,
+            },
+        ],
+        "tags": ["welcome", "onboarding"],
+    }
     assert "X-Helo-Channel-Id" in request.headers
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_send_transactional_batch(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_send_transactional_batch(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={"responses": [{"status": "example"}]},
@@ -79,13 +91,23 @@ def test_send_transactional_batch(
     assert request is not None
     assert request.method == "POST"
     assert request.url.path == "/send/transactional/batch"
+    assert json.loads(request.content) == {
+        "requests": [
+            {
+                "from": {"email": "from@yourdomain.com", "name": "From name"},
+                "to": [{"email": "to@example.com", "name": "To name"}],
+                "subject": "Hello from Helo",
+                "html": "<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
+                "text": "This is a test message, delivered with <3 by Helo.",
+                "tags": ["welcome", "onboarding"],
+            },
+        ],
+    }
     assert "X-Helo-Channel-Id" in request.headers
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_send_broadcast(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_send_broadcast(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
@@ -94,10 +116,9 @@ def test_send_broadcast(
     client.sending.send_broadcast(
         from_={"email": "test@example.com", "name": "test-name"},
         template={
-            "id": "550e8400-e29b-41d4-a716-446655440000",
-            "subject": "test-subject",
-            "html": "test-html",
-            "text": "test-text",
+            "subject": "Hello, {{name}}",
+            "html": "<html><body><h1>Hi {{name}}.</h1><p>This is a broadcast, delivered with <3 by Helo.</p></body></html>",
+            "text": "Hi {{name}}. This is a broadcast, delivered with <3 by Helo.",
             "inlineStyles": True,
         },
         messages=[
@@ -126,13 +147,38 @@ def test_send_broadcast(
     assert request is not None
     assert request.method == "POST"
     assert request.url.path == "/send/broadcast"
+    assert json.loads(request.content) == {
+        "from": {"email": "test@example.com", "name": "test-name"},
+        "template": {
+            "subject": "Hello, {{name}}",
+            "html": "<html><body><h1>Hi {{name}}.</h1><p>This is a broadcast, delivered with <3 by Helo.</p></body></html>",
+            "text": "Hi {{name}}. This is a broadcast, delivered with <3 by Helo.",
+            "inlineStyles": True,
+        },
+        "messages": [
+            {
+                "to": [{"email": "test@example.com", "name": "test-name"}],
+                "tags": ["test-tag"],
+            },
+        ],
+        "replyTo": [{"email": "test@example.com", "name": "test-name"}],
+        "tracking": {"opens": True, "links": True},
+        "attachments": [
+            {
+                "content": "SGVsbG8gd29ybGQ=",
+                "contentId": "test-contentId",
+                "contentType": "test-contentType",
+                "fileName": "test-fileName",
+                "disposition": helo.AttachmentDisposition.ATTACHMENT,
+            },
+        ],
+        "tags": ["test-tag"],
+    }
     assert "X-Helo-Channel-Id" in request.headers
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_send_broadcast_message(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_send_broadcast_message(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
@@ -147,13 +193,6 @@ def test_send_broadcast_message(
         subject="Hello from Helo",
         html="<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
         text="This is a test message, delivered with <3 by Helo.",
-        template={
-            "id": "550e8400-e29b-41d4-a716-446655440000",
-            "subject": "test-subject",
-            "html": "test-html",
-            "text": "test-text",
-            "inlineStyles": True,
-        },
         tracking={"opens": True, "links": True},
         attachments=[
             {
@@ -173,6 +212,27 @@ def test_send_broadcast_message(
     assert request is not None
     assert request.method == "POST"
     assert request.url.path == "/send/broadcast/message"
+    assert json.loads(request.content) == {
+        "from": {"email": "from@yourdomain.com", "name": "From name"},
+        "to": [{"email": "to@example.com", "name": "To name"}],
+        "cc": [{"email": "cc@example.com", "name": "Cc name"}],
+        "bcc": [{"email": "bcc@example.com", "name": "Bcc name"}],
+        "replyTo": [{"email": "reply-to@example.com", "name": "Reply-To name"}],
+        "subject": "Hello from Helo",
+        "html": "<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
+        "text": "This is a test message, delivered with <3 by Helo.",
+        "tracking": {"opens": True, "links": True},
+        "attachments": [
+            {
+                "content": "SGVsbG8gd29ybGQ=",
+                "contentId": "test-contentId",
+                "contentType": "test-contentType",
+                "fileName": "test-fileName",
+                "disposition": helo.AttachmentDisposition.ATTACHMENT,
+            },
+        ],
+        "tags": ["welcome", "onboarding"],
+    }
     assert "X-Helo-Channel-Id" in request.headers
     assert "X-Helo-Idempotency-Key" in request.headers
 
@@ -195,13 +255,6 @@ async def test_send_transactional_async(
         subject="Hello from Helo",
         html="<html><body><h1>Hi there, new friend.</h1><p>This is a test message, delivered with <3 by Helo. </p></body></html>",
         text="This is a test message, delivered with <3 by Helo.",
-        template={
-            "id": "550e8400-e29b-41d4-a716-446655440000",
-            "subject": "test-subject",
-            "html": "test-html",
-            "text": "test-text",
-            "inlineStyles": True,
-        },
         tracking={"opens": True, "links": True},
         attachments=[
             {
