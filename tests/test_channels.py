@@ -7,13 +7,16 @@ from pytest_httpx import HTTPXMock
 import sdk_helo_email as helo
 
 
-def test_list(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_list(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="GET",
         json={"results": [{}], "totalCount": 1},
     )
 
-    client.channels.list()
+    client.channels.list(
+    )
 
     request = httpx_mock.get_request()
     assert request is not None
@@ -21,7 +24,9 @@ def test_list(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/channels"
 
 
-def test_create(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_create(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
@@ -44,7 +49,9 @@ def test_create(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     }
 
 
-def test_retrieve(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_retrieve(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="GET",
         json={},
@@ -60,7 +67,9 @@ def test_retrieve(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/channels/550e8400-e29b-41d4-a716-446655440000"
 
 
-def test_update(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_update(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="PATCH",
         json={},
@@ -84,7 +93,9 @@ def test_update(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     }
 
 
-def test_delete(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_delete(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="DELETE",
         status_code=204,
@@ -100,14 +111,17 @@ def test_delete(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/channels/550e8400-e29b-41d4-a716-446655440000"
 
 
-async def test_list_async(async_client: helo.AsyncHelo, httpx_mock: HTTPXMock) -> None:
+async def test_list_async(
+    async_client: helo.AsyncHelo, httpx_mock: HTTPXMock
+) -> None:
     """The async resource is generated from the same operation, so one call proves the pair."""
     httpx_mock.add_response(
         method="GET",
         json={"results": [{}], "totalCount": 1},
     )
 
-    await async_client.channels.list()
+    await async_client.channels.list(
+    )
 
     request = httpx_mock.get_request()
     assert request is not None

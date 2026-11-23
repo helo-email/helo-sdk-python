@@ -39,6 +39,17 @@ class AttachmentDisposition(HeloEnum):
     INLINE = "inline"
 
 
+class BatchValidationMode(HeloEnum):
+    """How the batch handles messages that fail validation. `strict` — any validation failure
+    rejects the whole batch with a 422, and no messages are sent. `relaxed` — valid messages
+    are sent, and each invalid message is returned as `failed`. Suppressed recipients and the
+    send limit are not validation, so they fail only the affected message in either mode.
+    """
+
+    STRICT = "strict"
+    RELAXED = "relaxed"
+
+
 class BroadcastStatus(HeloEnum):
     """Current processing state of a broadcast. `accepted` — queued, waiting for the channel to
     become available. `processing` — actively sending messages. `completed` — all messages

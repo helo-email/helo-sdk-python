@@ -7,7 +7,9 @@ from pytest_httpx import HTTPXMock
 import sdk_helo_email as helo
 
 
-def test_send_transactional(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_send_transactional(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
@@ -66,7 +68,9 @@ def test_send_transactional(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_send_transactional_batch(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_send_transactional_batch(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="POST",
         json={"responses": [{"status": "example"}]},
@@ -83,6 +87,7 @@ def test_send_transactional_batch(client: helo.Helo, httpx_mock: HTTPXMock) -> N
                 "tags": ["welcome", "onboarding"],
             },
         ],
+        validation=helo.BatchValidationMode.STRICT,
         channel_id="550e8400-e29b-41d4-a716-446655440000",
         idempotency_key="test-idempotency_key",
     )
@@ -102,12 +107,15 @@ def test_send_transactional_batch(client: helo.Helo, httpx_mock: HTTPXMock) -> N
                 "tags": ["welcome", "onboarding"],
             },
         ],
+        "validation": helo.BatchValidationMode.STRICT,
     }
     assert "X-Helo-Channel-Id" in request.headers
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_send_broadcast(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_send_broadcast(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
@@ -178,7 +186,9 @@ def test_send_broadcast(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_send_broadcast_message(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_send_broadcast_message(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},

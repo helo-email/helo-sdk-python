@@ -19,6 +19,7 @@ from ..types.sending import (
     SendMessageAcceptedResponse,
     SendMessageBatchResponse,
 )
+from ..types.shared import BatchValidationMode
 from ._base import AsyncBaseResource, BaseResource
 
 
@@ -73,6 +74,7 @@ class SendingResource(BaseResource):
         self,
         *,
         requests: Sequence[SendMessageRequestParam],
+        validation: BatchValidationMode | None = None,
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendMessageBatchResponse:
@@ -80,6 +82,7 @@ class SendingResource(BaseResource):
 
         body = build_body(
             requests=requests,
+            validation=validation.value if validation else None,
         )
         headers = build_headers(
             **{"X-Helo-Channel-Id": channel_id},
@@ -223,6 +226,7 @@ class AsyncSendingResource(AsyncBaseResource):
         self,
         *,
         requests: Sequence[SendMessageRequestParam],
+        validation: BatchValidationMode | None = None,
         channel_id: str | None = None,
         idempotency_key: str | None = None,
     ) -> SendMessageBatchResponse:
@@ -230,6 +234,7 @@ class AsyncSendingResource(AsyncBaseResource):
 
         body = build_body(
             requests=requests,
+            validation=validation.value if validation else None,
         )
         headers = build_headers(
             **{"X-Helo-Channel-Id": channel_id},

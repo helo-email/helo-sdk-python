@@ -67,6 +67,7 @@ send_message_batch = client.sending.send_transactional_batch(
             "tags": ["welcome", "onboarding"],
         },
     ],
+    validation=helo.BatchValidationMode.STRICT,
     channel_id="550e8400-e29b-41d4-a716-446655440000",
     idempotency_key="test-idempotency_key",
 )

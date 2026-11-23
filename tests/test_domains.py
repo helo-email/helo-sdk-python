@@ -7,23 +7,24 @@ from pytest_httpx import HTTPXMock
 import sdk_helo_email as helo
 
 
-def test_list(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_list(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="GET",
         json={
             "totalCount": 1,
-            "results": [
-                {
+            "results": [{
                     "id": "550e8400-e29b-41d4-a716-446655440000",
                     "createdAt": "2024-01-01T00:00:00Z",
                     "name": "example",
                     "verified": True,
-                }
-            ],
+                }],
         },
     )
 
-    client.domains.list()
+    client.domains.list(
+    )
 
     request = httpx_mock.get_request()
     assert request is not None
@@ -31,7 +32,9 @@ def test_list(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/domains"
 
 
-def test_create(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_create(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="POST",
         json={
@@ -60,7 +63,9 @@ def test_create(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     }
 
 
-def test_retrieve(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_retrieve(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="GET",
         json={
@@ -82,7 +87,9 @@ def test_retrieve(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/domains/550e8400-e29b-41d4-a716-446655440000"
 
 
-def test_update(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_update(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="PATCH",
         json={
@@ -109,7 +116,9 @@ def test_update(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     }
 
 
-def test_delete(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_delete(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="DELETE",
         status_code=204,
@@ -125,7 +134,9 @@ def test_delete(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/domains/550e8400-e29b-41d4-a716-446655440000"
 
 
-def test_verify(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_verify(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
@@ -141,7 +152,9 @@ def test_verify(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/domains/550e8400-e29b-41d4-a716-446655440000/verify"
 
 
-def test_rotate_key(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+def test_rotate_key(
+    client: helo.Helo, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
@@ -157,24 +170,25 @@ def test_rotate_key(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     assert request.url.path == "/domains/550e8400-e29b-41d4-a716-446655440000/rotate-key"
 
 
-async def test_list_async(async_client: helo.AsyncHelo, httpx_mock: HTTPXMock) -> None:
+async def test_list_async(
+    async_client: helo.AsyncHelo, httpx_mock: HTTPXMock
+) -> None:
     """The async resource is generated from the same operation, so one call proves the pair."""
     httpx_mock.add_response(
         method="GET",
         json={
             "totalCount": 1,
-            "results": [
-                {
+            "results": [{
                     "id": "550e8400-e29b-41d4-a716-446655440000",
                     "createdAt": "2024-01-01T00:00:00Z",
                     "name": "example",
                     "verified": True,
-                }
-            ],
+                }],
         },
     )
 
-    await async_client.domains.list()
+    await async_client.domains.list(
+    )
 
     request = httpx_mock.get_request()
     assert request is not None

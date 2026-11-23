@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import Field
 
-from .shared import AttachmentDisposition, HeloModel, MailAddress
+from .shared import AttachmentDisposition, BatchValidationMode, HeloModel, MailAddress
 
 
 class Attachment(HeloModel):
@@ -103,6 +103,7 @@ class SendMessageResponse(HeloModel):
     suppressions: list[str] | None = None
     error_code: str | None = None
     error_message: str | None = None
+    errors: dict[str, list[ValidationError]] | None = None
 
 
 class SendMessageAcceptedResponse(HeloModel):
@@ -115,9 +116,11 @@ class SendMessageFailedResponse(HeloModel):
     status: str
     error_code: str
     error_message: str
+    errors: dict[str, list[ValidationError]] | None = None
 
 
 class SendMessageBatchRequest(HeloModel):
+    validation: BatchValidationMode | None = None
     requests: list[SendMessageRequest]
 
 

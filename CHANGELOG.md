@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.0
+
+- Added `validation` parameter to batch sending requests, allowing control over the processing behaviour of partial failures.
+
 ## 1.4.0
 
 - Fixed `send_transactional`, `send_transactional_batch`, `send_broadcast` and

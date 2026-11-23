@@ -62,6 +62,7 @@ from .sending import (
 )
 from .shared import (
     AttachmentDisposition,
+    BatchValidationMode,
     BroadcastStatus,
     DeliveryType,
     DnsRecordStatus,
@@ -139,6 +140,7 @@ __all__ = [
     "ActivityMailAddress",
     "Attachment",
     "AttachmentDisposition",
+    "BatchValidationMode",
     "BouncedDetails",
     "BroadcastContent",
     "BroadcastContentAttachment",
