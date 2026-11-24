@@ -74,6 +74,7 @@ from .shared import (
     MailType,
     MessageStatus,
     SuppressionReason,
+    ValidationError,
     WebhookEvent,
 )
 from .statistics import (
@@ -248,6 +249,7 @@ __all__ = [
     "UpdateDomainRequest",
     "UpdateTemplateRequest",
     "UpdateWebhookRequest",
+    "ValidationError",
     "WebhookEvent",
     "WebhookHeader",
     "WebhookLastResponse",

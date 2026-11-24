@@ -135,6 +135,12 @@ class WebhookEvent(HeloEnum):
     RETURN_PATH_DOMAIN_VERIFICATION_FAILED = "return-path-domain-verification-failed"
 
 
+class ValidationError(HeloModel):
+    """A single field validation error."""
+
+    message: str
+
+
 class MailAddress(HeloModel):
     email: str
     name: str | None = None

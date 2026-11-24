@@ -4,7 +4,13 @@ from typing import Any
 
 from pydantic import Field
 
-from .shared import AttachmentDisposition, BatchValidationMode, HeloModel, MailAddress
+from .shared import (
+    AttachmentDisposition,
+    BatchValidationMode,
+    HeloModel,
+    MailAddress,
+    ValidationError,
+)
 
 
 class Attachment(HeloModel):
