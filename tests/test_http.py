@@ -34,7 +34,9 @@ def test_retries_an_idempotent_request(http: HttpClient, httpx_mock: HTTPXMock) 
     assert len(httpx_mock.get_requests()) == 2
 
 
-def test_retries_a_post_carrying_an_idempotency_key(http: HttpClient, httpx_mock: HTTPXMock) -> None:
+def test_retries_a_post_carrying_an_idempotency_key(
+    http: HttpClient, httpx_mock: HTTPXMock
+) -> None:
     httpx_mock.add_response(status_code=502)
     httpx_mock.add_response(json={"ok": True})
 
@@ -115,9 +117,7 @@ def test_max_retries_zero_disables_retries(httpx_mock: HTTPXMock) -> None:
 
 # A send whose response is lost must not be sent twice: the SDK generates a key
 # when the caller doesn't pass one, and reuses it on the retry.
-def test_generates_one_idempotency_key_per_call(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_generates_one_idempotency_key_per_call(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(status_code=503)
     httpx_mock.add_response(json={})
 
@@ -151,17 +151,17 @@ def test_generates_one_idempotency_key_per_call(
 
 
 # Leaving an argument out can't clear a field; naming it in null_fields sends null.
-def test_null_fields_sends_null(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
-    httpx_mock.add_response(json={
+def test_null_fields_sends_null(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
+    httpx_mock.add_response(
+        json={
             "id": "550e8400-e29b-41d4-a716-446655440000",
             "createdAt": "2024-01-01T00:00:00Z",
             "updatedAt": "2024-01-01T00:00:00Z",
             "version": 1,
             "name": "example",
             "subject": "example",
-        })
+        }
+    )
 
     client.templates.update(
         "550e8400-e29b-41d4-a716-446655440000",
@@ -180,9 +180,7 @@ def test_null_fields_sends_null(
     assert json.loads(request.content)["html"] is None
 
 
-def test_null_fields_rejects_a_field_that_cannot_be_null(
-    client: helo.Helo
-) -> None:
+def test_null_fields_rejects_a_field_that_cannot_be_null(client: helo.Helo) -> None:
     with pytest.raises(ValueError, match="can't be null"):
         client.templates.update(
             "550e8400-e29b-41d4-a716-446655440000",

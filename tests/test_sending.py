@@ -7,9 +7,7 @@ from pytest_httpx import HTTPXMock
 import sdk_helo_email as helo
 
 
-def test_send_transactional(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_send_transactional(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
@@ -68,9 +66,7 @@ def test_send_transactional(
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_send_transactional_batch(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_send_transactional_batch(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={"responses": [{"status": "example"}]},
@@ -113,9 +109,7 @@ def test_send_transactional_batch(
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_send_broadcast(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_send_broadcast(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
@@ -186,9 +180,7 @@ def test_send_broadcast(
     assert "X-Helo-Idempotency-Key" in request.headers
 
 
-def test_send_broadcast_message(
-    client: helo.Helo, httpx_mock: HTTPXMock
-) -> None:
+def test_send_broadcast_message(client: helo.Helo, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         method="POST",
         json={},
